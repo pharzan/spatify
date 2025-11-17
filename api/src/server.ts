@@ -1,9 +1,12 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import { config } from './config/environment.js';
 import { registerSwagger } from './plugins/swagger.js';
-import { InMemorySpatiRepository } from './repositories/spatiRepository.js';
-import { SpatiService } from './services/spatiService.js';
+import { db } from './db/client.js';
+import { registerAdminSpatiRoutes } from './routes/adminSpatiRoutes.js';
 import { registerSpatiRoutes } from './routes/spatiRoutes.js';
+import { PostgresSpatiRepository } from './repositories/spatiRepository.js';
+import { SpatiAdminService } from './services/spatiAdminService.js';
+import { SpatiService } from './services/spatiService.js';
 
 export const buildServer = async (): Promise<FastifyInstance> => {
   const app = Fastify({
@@ -12,9 +15,11 @@ export const buildServer = async (): Promise<FastifyInstance> => {
 
   await registerSwagger(app);
 
-  const repository = new InMemorySpatiRepository();
+  const repository = new PostgresSpatiRepository(db);
   const spatiService = new SpatiService(repository);
+  const spatiAdminService = new SpatiAdminService(repository);
   registerSpatiRoutes(app, spatiService);
+  registerAdminSpatiRoutes(app, spatiAdminService);
 
   return app;
 };

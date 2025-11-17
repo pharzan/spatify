@@ -13,3 +13,7 @@ export const SpatiLocationSchema = z.object({
 });
 
 export type SpatiLocation = z.infer<typeof SpatiLocationSchema>;
+
+export const SpatiLocationInputSchema = SpatiLocationSchema.omit({ id: true });
+
+export type SpatiLocationInput = z.infer<typeof SpatiLocationInputSchema>;
