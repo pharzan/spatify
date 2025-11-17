@@ -1,0 +1,45 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "app",
+      "path": "./app",
+    },
+    {
+      "name": "api",
+      "path": "./api"
+    }
+  ],
+  "settings": {
+    "deno.enable": false,
+    "deno.lint": false,
+    "deno.suggest.imports.hosts": {
+      "https://deno.land": false
+    },
+    "typescript.tsdk": "${workspaceFolder:api}/node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "files.exclude": {
+      "**/.git": true,
+      "**/node_modules": true,
+      "**/dist": true
+    },
+    "search.exclude": {
+      "**/api/dist": true,
+      "**/ui/.next": true,
+      "**/node_modules": true
+    },
+    "eslint.workingDirectories": [
+      {
+        "directory": "./api",
+        "changeProcessCWD": true
+      },
+      {
+        "directory": "./app",
+        "changeProcessCWD": true
+      }
+    ],
+  }
+}
