@@ -10,6 +10,10 @@ const spatiIdParamSchema = z.object({
   id: z.string().min(1).describe('Späti identifier'),
 });
 
+const adminSpatiLocationSchema = SpatiLocationSchema.clone();
+const adminSpatiLocationInputSchema = SpatiLocationInputSchema.clone();
+const adminSpatiIdParamSchema = spatiIdParamSchema.clone();
+
 const adminTags = ['Spatis Admin'];
 
 const notFoundHandler = (error: unknown): never => {
@@ -26,12 +30,12 @@ export const registerAdminSpatiRoutes = (
   fastify: FastifyInstance,
   service: SpatiAdminService,
 ): void => {
-  const spatiLocationSchemaRef = registerSchema(SpatiLocationSchema, 'AdminSpatiLocation');
+  const spatiLocationSchemaRef = registerSchema(adminSpatiLocationSchema, 'AdminSpatiLocation');
   const spatiLocationInputSchemaRef = registerSchema(
-    SpatiLocationInputSchema,
+    adminSpatiLocationInputSchema,
     'AdminSpatiLocationInput',
   );
-  const spatiIdParamSchemaRef = registerSchema(spatiIdParamSchema, 'AdminSpatiIdParams');
+  const spatiIdParamSchemaRef = registerSchema(adminSpatiIdParamSchema, 'AdminSpatiIdParams');
 
   const createSchema = {
     tags: adminTags,

@@ -12,9 +12,10 @@ export const registerSpatiRoutes = (
   fastify: FastifyInstance,
   service: SpatiService,
 ): void => {
+  const spatiLocationSchemaRef = registerSchema(SpatiLocationSchema, 'PublicSpatiLocation');
   const spatiListSchemaRef = registerSchema(
     spatiListSchema,
-    'SpatiLocationsResponse',
+    'PublicSpatiLocationsResponse',
   );
 
   const listSchema = {
