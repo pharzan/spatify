@@ -1,4 +1,5 @@
 import Fastify, { FastifyInstance } from 'fastify';
+import fastifyCors from '@fastify/cors';
 import { config } from './config/environment.js';
 import { registerSwagger } from './plugins/swagger.js';
 import { db } from './db/client.js';
@@ -7,12 +8,15 @@ import { registerSpatiRoutes } from './routes/spatiRoutes.js';
 import { PostgresSpatiRepository } from './repositories/spatiRepository.js';
 import { SpatiAdminService } from './services/spatiAdminService.js';
 import { SpatiService } from './services/spatiService.js';
-
+import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 export const buildServer = async (): Promise<FastifyInstance> => {
   const app = Fastify({
     logger: true,
-  });
+  }).withTypeProvider<FastifyZodOpenApiTypeProvider>();
 
+  await app.register(fastifyCors, {
+    origin: true,
+  });
   await registerSwagger(app);
 
   const repository = new PostgresSpatiRepository(db);

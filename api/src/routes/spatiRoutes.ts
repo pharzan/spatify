@@ -1,28 +1,35 @@
-import { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { type FastifyZodOpenApiSchema } from 'fastify-zod-openapi';
 import { SpatiLocationSchema } from '../models/api.js';
 import { SpatiService } from '../services/spatiService.js';
-import { cloneJsonSchema } from '../utils/schema.js';
+import { registerSchema } from '../utils/schema.js';
 
 const spatiListSchema = z.array(SpatiLocationSchema);
-const spatiListJsonSchema = zodToJsonSchema(spatiListSchema, {
-  target: 'openApi3',
-});
+
 
 export const registerSpatiRoutes = (
   fastify: FastifyInstance,
   service: SpatiService,
 ): void => {
-  const listOptions: RouteShorthandOptions = {
-    schema: {
-      tags: ['Spatis'],
-      summary: 'List Späti locations',
-      response: {
-        200: cloneJsonSchema(spatiListJsonSchema),
-      },
-    },
-  };
+  const spatiListSchemaRef = registerSchema(
+    spatiListSchema,
+    'SpatiLocationsResponse',
+  );
 
-  fastify.get('/spatis', listOptions, async () => service.listSpatis());
+  const listSchema = {
+    tags: ['Spatis'],
+    summary: 'List Späti locations',
+    response: {
+      200: spatiListSchemaRef,
+    },
+  } satisfies FastifyZodOpenApiSchema;
+
+  fastify.get(
+    '/spatis',
+    {
+      schema: listSchema,
+    },
+    async () => service.listSpatis(),
+  );
 };

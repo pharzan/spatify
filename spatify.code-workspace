@@ -11,6 +11,10 @@
     {
       "name": "api",
       "path": "./api"
+    },
+    {
+      "name": "dashboard",
+      "path": "./dashboard"
     }
   ],
   "settings": {
