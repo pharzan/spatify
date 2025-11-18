@@ -16,6 +16,7 @@ export const buildServer = async (): Promise<FastifyInstance> => {
 
   await app.register(fastifyCors, {
     origin: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
   await registerSwagger(app);
 
