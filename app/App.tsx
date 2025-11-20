@@ -11,11 +11,22 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { mockLocations, Location } from "./data.ts";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import * as ExpoLocation from "expo-location";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyCg64yOWJ5nnyiBv9jrHceTYOoeUNJgqOk"; // Replace with your actual Google Maps API key
+import {
+  useSpatisQuery,
+  type SpatiLocation,
+} from "./spatis";
+
+import Constants from "expo-constants";
+
+const GOOGLE_MAPS_API_KEY =
+  Constants.expoConfig?.extra?.googleMapsApiKey ??
+  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ??
+  "";
+const queryClient = new QueryClient();
 
 const mapStyle = [
   {
@@ -165,8 +176,29 @@ function FilterIcon() {
   );
 }
 
-export default function App() {
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+function RatingStars({ rating }: { rating: number }) {
+  const rounded = Math.round(rating);
+
+  return (
+    <View style={styles.starsRow}>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <Text key={index} style={styles.starIcon}>
+          {index < rounded ? "★" : "☆"}
+        </Text>
+      ))}
+      <Text style={styles.ratingValue}>{rating.toFixed(1)}</Text>
+    </View>
+  );
+}
+
+function SpatiMap() {
+  const {
+    data: spatiLocations = [],
+    isLoading: isSpatiLoading,
+    isError: isSpatiError,
+    error: spatiError,
+  } = useSpatisQuery();
+  const [selectedLocation, setSelectedLocation] = useState<SpatiLocation | null>(
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
@@ -177,6 +209,7 @@ export default function App() {
   const [showRoute, setShowRoute] = useState(false);
   const [routeError, setRouteError] = useState<string | null>(null);
   const mapRef = useRef<MapView>(null);
+
   useEffect(() => {
     // Force map to Berlin after component mounts
     const timer = setTimeout(() => {
@@ -220,7 +253,27 @@ export default function App() {
     })();
   }, []);
 
-  const filteredLocations = mockLocations.filter((location) => {
+  useEffect(() => {
+    if (!selectedLocation) {
+      return;
+    }
+
+    const updatedLocation = spatiLocations.find(
+      (location) => location.id === selectedLocation.id
+    );
+
+    if (!updatedLocation) {
+      setSelectedLocation(null);
+      setShowRoute(false);
+      return;
+    }
+
+    if (updatedLocation !== selectedLocation) {
+      setSelectedLocation(updatedLocation);
+    }
+  }, [spatiLocations, selectedLocation]);
+
+  const filteredLocations = spatiLocations.filter((location) => {
     if (!searchQuery.trim()) return false;
     const query = searchQuery.toLowerCase();
     return (
@@ -230,6 +283,11 @@ export default function App() {
     );
   });
 
+  const dataStatusMessage = isSpatiLoading
+    ? "Loading nearby Spätis..."
+    : isSpatiError
+    ? spatiError?.message ?? "Failed to load Späti locations"
+    : null;
   return (
     <View style={styles.container}>
       {/* Full screen map */}
@@ -245,7 +303,7 @@ export default function App() {
         showsUserLocation={false}
         customMapStyle={mapStyle}
       >
-        {mockLocations.map((location) => (
+        {spatiLocations.map((location) => (
           <Marker
             key={location.id}
             coordinate={{
@@ -334,6 +392,23 @@ export default function App() {
           </TouchableOpacity>
         </View>
 
+        {dataStatusMessage && (
+          <View
+            style={[
+              styles.dataStatusContainer,
+              isSpatiError && styles.dataStatusError,
+            ]}
+          >
+            <Text
+              style={[
+                styles.dataStatusText,
+                isSpatiError && styles.dataStatusErrorText,
+              ]}
+            >
+              {dataStatusMessage}
+            </Text>
+          </View>
+        )}
         {/* Search results */}
         {filteredLocations.length > 0 && (
           <ScrollView style={styles.searchResults}>
@@ -397,14 +472,15 @@ export default function App() {
           </View>
 
           <View style={styles.textSection}>
-            <Text style={styles.mainText}>Check out our</Text>
-            <Text style={styles.mainText}>latest recommendations</Text>
-
-            <View style={styles.starsRow}>
-              <Text style={styles.starIcon}>⭐</Text>
-              <Text style={styles.starIcon}>⭐</Text>
-              <Text style={styles.starIcon}>⭐</Text>
-            </View>
+            <Text style={styles.locationName}>{selectedLocation.name}</Text>
+            <Text style={styles.locationDescription}>
+              {selectedLocation.description}
+            </Text>
+            <Text style={styles.locationAddress}>{selectedLocation.address}</Text>
+            <Text style={styles.locationMeta}>
+              {selectedLocation.type} • {selectedLocation.hours}
+            </Text>
+            <RatingStars rating={selectedLocation.rating} />
 
             <TouchableOpacity
               style={styles.directionsButton}
@@ -435,6 +511,14 @@ export default function App() {
         </TouchableOpacity>
       </View>
     </View>
+  );
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SpatiMap />
+    </QueryClientProvider>
   );
 }
 
@@ -525,6 +609,49 @@ const styles = StyleSheet.create({
   profileIcon: {
     fontSize: 24,
   },
+  dataStatusContainer: {
+    marginHorizontal: 24,
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: "white",
+    alignSelf: "flex-start",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  dataStatusText: {
+    fontSize: 12,
+    color: "#666",
+  },
+  dataStatusError: {
+    backgroundColor: "#ffe5e5",
+  },
+  dataStatusErrorText: {
+    color: "#d32f2f",
+  },
+  logButton: {
+    alignSelf: "flex-start",
+    marginHorizontal: 24,
+    marginTop: 8,
+    backgroundColor: "#4CAF50",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  logButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
+  },
   bottomCard: {
     position: "absolute",
     bottom: 120,
@@ -574,20 +701,43 @@ const styles = StyleSheet.create({
     padding: 32,
     alignItems: "center",
   },
-  mainText: {
-    fontSize: 24,
+  locationName: {
+    fontSize: 22,
     fontWeight: "700",
     color: "#1a1a1a",
     textAlign: "center",
-    lineHeight: 32,
+  },
+  locationDescription: {
+    marginTop: 8,
+    fontSize: 16,
+    color: "#555",
+    textAlign: "center",
+  },
+  locationAddress: {
+    marginTop: 8,
+    fontSize: 14,
+    color: "#777",
+    textAlign: "center",
+  },
+  locationMeta: {
+    marginTop: 4,
+    fontSize: 13,
+    color: "#4CAF50",
+    textTransform: "capitalize",
   },
   starsRow: {
     flexDirection: "row",
-    marginTop: 20,
-    gap: 20,
+    marginTop: 16,
+    gap: 6,
+    alignItems: "center",
   },
   starIcon: {
-    fontSize: 48,
+    fontSize: 20,
+  },
+  ratingValue: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
   },
   directionsButton: {
     backgroundColor: "#4CAF50",
