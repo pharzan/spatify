@@ -27,7 +27,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["SpatiLocationsResponse"];
+                        "application/json": components["schemas"]["PublicSpatiLocationsResponse"];
                     };
                 };
             };
@@ -146,6 +146,132 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/amenities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List amenities */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAmenitiesResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create an amenity */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AdminAmenityInput"];
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAmenity"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/amenities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update an amenity */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Amenity identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AdminAmenityInput"];
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAmenity"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        /** Delete an amenity */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Amenity identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": null;
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -159,11 +285,18 @@ export interface components {
             hours: string;
             type: string;
             rating: number;
+            /**
+             * @description Amenities assigned to this Späti
+             * @default []
+             */
+            amenityIds: string[];
         };
-        SpatiLocationsResponse: components["schemas"]["AdminSpatiLocation"][];
-        AdminSpatiLocation: {
-            /** @description Unique identifier of the Späti */
-            id: string;
+        AdminAmenityInput: {
+            /** @description Human readable amenity name */
+            name: string;
+        };
+        PublicSpatiLocationsResponse: components["schemas"]["PublicSpatiLocation"][];
+        PublicSpatiLocation: {
             name: string;
             description: string;
             latitude: number;
@@ -172,7 +305,19 @@ export interface components {
             hours: string;
             type: string;
             rating: number;
+            /** @description Unique identifier of the Späti */
+            id: string;
+            /** @description Amenities available at the Späti */
+            amenities: components["schemas"]["AdminAmenity"][];
         };
+        AdminAmenity: {
+            /** @description Unique identifier of the amenity */
+            id: string;
+            /** @description Human readable amenity name */
+            name: string;
+        };
+        AdminSpatiLocation: components["schemas"]["PublicSpatiLocation"];
+        AdminAmenitiesResponse: components["schemas"]["AdminAmenity"][];
     };
     responses: never;
     parameters: never;
