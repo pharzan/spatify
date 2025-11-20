@@ -59,7 +59,6 @@ export const SelectInput = (props: SelectInputProps) => {
     className,
     emptyText = "",
     emptyValue = "",
-    filter: _filter,
     create,
     createLabel,
     onCreate,
@@ -140,8 +139,7 @@ export const SelectInput = (props: SelectInputProps) => {
   }, [emptyText, translate]);
 
   const renderMenuItemOption = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (choice: any) => getChoiceText(choice),
+        (choice: any) => getChoiceText(choice),
     [getChoiceText],
   );
 
@@ -291,7 +289,6 @@ export type SelectInputProps = ChoicesProps &
   Partial<InputProps> &
   Omit<SupportCreateSuggestionOptions, "handleChange"> & {
     emptyText?: string | ReactElement;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    emptyValue?: any;
+        emptyValue?: any;
     onChange?: (value: string) => void;
   } & Omit<ComponentProps<typeof FormField>, "id" | "name" | "children">;

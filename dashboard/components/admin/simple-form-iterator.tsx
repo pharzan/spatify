@@ -1,7 +1,7 @@
 import get from "lodash/get";
 import * as React from "react";
 import type { ReactElement, ReactNode } from "react";
-import { Children, useCallback, useMemo, useRef, useState } from "react";
+import { Children, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   ArrayInputContextValue,
   RaRecord,
@@ -73,14 +73,15 @@ export const SimpleFormIterator = (props: SimpleFormIteratorProps) => {
   const { trigger, getValues } = useFormContext();
   const translate = useTranslate();
   const record = useRecordContext(props);
-  const initialDefaultValue = useRef({});
+  const initialDefaultValue = useRef<Record<string, unknown>>({});
 
   const removeField = useCallback(
     (index: number) => {
       remove(index);
-      const isScalarArray = getValues(finalSource).every(
-        (value: any) => typeof value !== "object",
-      );
+      const values = getValues(finalSource);
+      const isScalarArray =
+        Array.isArray(values) &&
+        values.every((value) => typeof value !== "object" || value === null);
       if (isScalarArray) {
         // Trigger validation on the Array to avoid ghost errors.
         // Otherwise, validation errors on removed fields might still be displayed
@@ -90,18 +91,20 @@ export const SimpleFormIterator = (props: SimpleFormIteratorProps) => {
     [remove, trigger, finalSource, getValues],
   );
 
-  if (fields.length > 0) {
-    const { id: _id, ...rest } = fields[0];
-    initialDefaultValue.current = rest;
-    for (const k in initialDefaultValue.current) {
-      // @ts-expect-error: reset fields
-      initialDefaultValue.current[k] = null;
+  useEffect(() => {
+    if (fields.length > 0) {
+      const { id: unusedId, ...rest } = fields[0];
+      void unusedId;
+      initialDefaultValue.current = rest;
+      for (const key of Object.keys(initialDefaultValue.current)) {
+        initialDefaultValue.current[key] = null;
+      }
     }
-  }
+  }, [fields]);
 
   const addField = useCallback(
-    (item: any = undefined) => {
-      let defaultValue = item;
+    (item?: unknown) => {
+      let defaultValue: unknown = item;
       if (item == null) {
         defaultValue = initialDefaultValue.current;
         if (
@@ -119,7 +122,13 @@ export const SimpleFormIterator = (props: SimpleFormIteratorProps) => {
         } else {
           // ArrayInput used for an array of objects
           // (e.g. authors: [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Doe' }])
-          defaultValue = defaultValue || ({} as Record<string, unknown>);
+          if (
+            typeof defaultValue !== "object" ||
+            defaultValue === null ||
+            Array.isArray(defaultValue)
+          ) {
+            defaultValue = {};
+          }
           Children.forEach(children, (input) => {
             if (
               React.isValidElement(input) &&
@@ -130,7 +139,8 @@ export const SimpleFormIterator = (props: SimpleFormIteratorProps) => {
               // @ts-expect-error: Check if the child has a source prop
               defaultValue[input.props.source] =
                 // @ts-expect-error: Check if the child has a source prop
-                input.props.defaultValue ?? null;
+                  (defaultValue as Record<string, unknown>)[input.props.source] =
+                    input.props.defaultValue ?? null;
             }
           });
         }
@@ -225,8 +235,7 @@ export interface SimpleFormIteratorProps extends Partial<UseFieldArrayReturn> {
   getItemLabel?: boolean | GetItemLabelFunc;
   inline?: boolean;
   meta?: {
-    // the type defined in FieldArrayRenderProps says error is boolean, which is wrong.
-    error?: any;
+    error?: unknown;
     submitFailed?: boolean;
   };
   record?: RaRecord;
@@ -356,6 +365,7 @@ export const SimpleFormIteratorItem = React.forwardRef(
     );
   },
 );
+SimpleFormIteratorItem.displayName = "SimpleFormIteratorItem";
 
 export type DisableRemoveFunction = (record: RaRecord) => boolean;
 

@@ -1,11 +1,11 @@
 import * as React from "react";
 import {
   ChangeEvent,
+  MouseEvent,
   createContext,
   isValidElement,
   ReactElement,
   useContext,
-  useRef,
   useState,
 } from "react";
 import { Identifier, OptionText, useTranslate } from "ra-core";
@@ -49,34 +49,34 @@ export const useSupportCreateSuggestion = <T = unknown,>(
 
   const translate = useTranslate();
   const [renderOnCreate, setRenderOnCreate] = useState(false);
-  const filterRef = useRef(filter);
+  const [createFilter, setCreateFilter] = useState(filter);
 
   return {
     createId: createValue,
     createHintId: createHintValue,
-    getCreateItem: (filter?: string) => {
-      filterRef.current = filter;
-
-      return set(
+    getCreateItem: (filterValue?: string) =>
+      set(
         {
           id: createItemLabel && !filter ? createHintValue : createValue,
         },
         typeof optionText === "string" ? optionText : "name",
-        filter && createItemLabel
+        filterValue && createItemLabel
           ? typeof createItemLabel === "string"
             ? translate(createItemLabel, {
-                item: filter,
+                item: filterValue,
                 _: createItemLabel,
               })
-            : createItemLabel(filter)
+            : createItemLabel(filterValue)
           : typeof createLabel === "string"
             ? translate(createLabel, { _: createLabel })
             : createLabel,
-      );
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    handleChange: async (eventOrValue: MouseEvent | any) => {
-      const value = eventOrValue?.target?.value || eventOrValue;
+      ),
+    handleChange: async (
+      eventOrValue: ChangeEvent | MouseEvent | T,
+    ) => {
+      const value = isEventWithValue(eventOrValue)
+        ? eventOrValue.target.value
+        : eventOrValue;
       const finalValue = Array.isArray(value) ? [...value].pop() : value;
 
       if (finalValue?.id === createValue || finalValue === createValue) {
@@ -94,6 +94,7 @@ export const useSupportCreateSuggestion = <T = unknown,>(
             return;
           }
         } else {
+          setCreateFilter(filter);
           setRenderOnCreate(true);
           return;
         }
@@ -104,7 +105,7 @@ export const useSupportCreateSuggestion = <T = unknown,>(
       renderOnCreate && isValidElement(create) ? (
         <CreateSuggestionContext.Provider
           value={{
-            filter: filterRef.current,
+            filter: createFilter,
             onCancel: () => setRenderOnCreate(false),
             onCreate: (item) => {
               setRenderOnCreate(false);
@@ -116,8 +117,8 @@ export const useSupportCreateSuggestion = <T = unknown,>(
         </CreateSuggestionContext.Provider>
       ) : null,
     getOptionDisabled: (option) =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (option as any)?.id === createHintValue || option === createHintValue,
+      (option as Record<string, unknown>)?.id === createHintValue ||
+      option === createHintValue,
   };
 };
 
@@ -142,12 +143,10 @@ export interface SupportCreateSuggestionOptions<T = unknown> {
 export interface UseSupportCreateValue<T = unknown> {
   createId: string;
   createHintId: string;
-  getCreateItem: (filterValue?: string) => {
-    id: Identifier;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-  };
-  handleChange: (eventOrValue: ChangeEvent | T) => Promise<void>;
+  getCreateItem: (filterValue?: string) => Record<string, unknown> & {
+      id: Identifier;
+    };
+  handleChange: (eventOrValue: ChangeEvent | MouseEvent | T) => Promise<void>;
   createElement: ReactElement | null;
   getOptionDisabled: (option: T) => boolean;
 }
@@ -184,5 +183,18 @@ export const useCreateSuggestionContext = () => {
 /**
  * @deprecated Use `OnCreateHandler` from "ra-core" when available.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type OnCreateHandler = (filter?: string) => any | Promise<any>;
+export type OnCreateHandler<T = unknown> = (
+  filter?: string,
+) => T | void | Promise<T | void>;
+
+const isEventWithValue = (
+  input: unknown,
+): input is { target: { value: unknown } } =>
+  Boolean(
+    typeof input === "object" &&
+      input &&
+      "target" in input &&
+      typeof (input as { target: { value?: unknown } }).target === "object" &&
+      (input as { target: { value?: unknown } }).target !== null &&
+      "value" in (input as { target: { value?: unknown } }).target,
+  );

@@ -63,9 +63,9 @@ import { cn } from "@/lib/utils";
  * );
  */
 export const ColumnsButton = (props: ColumnsButtonProps) => {
-  const { className, storeKey: _, ...rest } = props;
+  const { className, storeKey: storeKeyProp, ...rest } = props;
   const resource = useResourceContext(props);
-  const storeKey = props.storeKey || `${resource}.datatable`;
+  const storeKey = storeKeyProp || `${resource}.datatable`;
 
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
@@ -131,10 +131,7 @@ export const ColumnsSelector = ({ children }: ColumnsSelectorProps) => {
   const [columnRanks, setColumnRanks] = useStore<number[] | undefined>(
     `${storeKey}_columnRanks`,
   );
-  const [_hiddenColumns, setHiddenColumns] = useStore<string[]>(
-    storeKey,
-    defaultHiddenColumns,
-  );
+  const [, setHiddenColumns] = useStore<string[]>(storeKey, defaultHiddenColumns);
   const elementId = `${storeKey}-columnsSelector`;
 
   const [container, setContainer] = useState<HTMLElement | null>(() =>

@@ -6,6 +6,8 @@ import matches from "lodash/matches";
 import pickBy from "lodash/pickBy";
 import { CircleX } from "lucide-react";
 
+type FilterValue = Record<string, unknown>;
+
 export const ToggleFilterButton = ({
   label,
   size = "sm",
@@ -13,7 +15,7 @@ export const ToggleFilterButton = ({
   className,
 }: {
   label: React.ReactElement | string;
-  value: any;
+  value: FilterValue;
   className?: string;
   size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 }) => {
@@ -38,7 +40,10 @@ export const ToggleFilterButton = ({
   );
 };
 
-const toggleFilter = (value: any, filters: any) => {
+const toggleFilter = (
+  value: FilterValue,
+  filters: Record<string, unknown>,
+) => {
   const isSelected = matches(
     pickBy(value, (val) => typeof val !== "undefined"),
   )(filters);
@@ -55,5 +60,8 @@ const toggleFilter = (value: any, filters: any) => {
   return { ...filters, ...value };
 };
 
-const getIsSelected = (value: any, filters: any) =>
+const getIsSelected = (
+  value: FilterValue,
+  filters: Record<string, unknown>,
+) =>
   matches(pickBy(value, (val) => typeof val !== "undefined"))(filters);

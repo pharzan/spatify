@@ -71,4 +71,12 @@ const sanitizeRestProps = <T extends RaRecord>({
   icon: _icon,
   meta: _meta,
   ...rest
-}: BulkExportButtonProps<T>) => rest;
+}: BulkExportButtonProps<T>) => {
+  void _resource;
+  void _exporter;
+  void _onClick;
+  void _label;
+  void _icon;
+  void _meta;
+  return rest;
+};

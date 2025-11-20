@@ -7,8 +7,7 @@ import { genericMemo } from "@/lib/genericMemo";
 import { FieldProps } from "@/lib/field.type";
 
 const EmailFieldImpl = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  RecordType extends Record<string, any> = Record<string, any>,
+    RecordType extends Record<string, any> = Record<string, any>,
 >(
   inProps: EmailFieldProps<RecordType>,
 ) => {
@@ -44,8 +43,7 @@ EmailFieldImpl.displayName = "EmailFieldImpl";
 export const EmailField = genericMemo(EmailFieldImpl);
 
 export interface EmailFieldProps<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  RecordType extends Record<string, any> = Record<string, any>,
+    RecordType extends Record<string, any> = Record<string, any>,
 > extends FieldProps<RecordType>,
     AnchorHTMLAttributes<HTMLAnchorElement> {}
 

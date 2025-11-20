@@ -68,12 +68,7 @@ export const DateInput = (props: DateInputProps) => {
 
   const resource = useResourceContext(props);
 
-  const {
-    field,
-    fieldState: _fieldState,
-    id,
-    isRequired,
-  } = useInput({
+  const { field, id, isRequired } = useInput({
     defaultValue,
     source,
     validate,
@@ -180,17 +175,13 @@ export const DateInput = (props: DateInputProps) => {
     }
   });
 
-  const { ref, name } = field;
+  const name = field.name;
   const inputRef = React.useCallback(
     (node: HTMLInputElement | null) => {
-      if (typeof ref === "function") {
-        ref(node);
-      } else if (ref && node) {
-        (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
-      }
+      field.ref(node);
       localInputRef.current = node;
     },
-    [ref],
+    [field],
   );
 
   return (

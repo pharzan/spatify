@@ -13,8 +13,6 @@ export const NumberInput = (props: NumberInputProps) => {
     source,
     className,
     resource: resourceProp,
-    validate: _validateProp,
-    format: _formatProp,
     parse = convertStringToNumber,
     onFocus,
     ...rest
@@ -89,10 +87,10 @@ export interface NumberInputProps
       React.ComponentProps<"input">,
       "defaultValue" | "onBlur" | "onChange" | "type"
     > {
-  parse?: (value: string) => number;
+  parse?: (value: string) => number | null;
 }
 
-const convertStringToNumber = (value?: string | null) => {
+const convertStringToNumber = (value?: string | null): number | null => {
   if (value == null || value === "") {
     return null;
   }

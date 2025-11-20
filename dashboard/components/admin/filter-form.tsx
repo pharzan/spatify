@@ -52,46 +52,52 @@ export const FilterForm = (inProps: FilterFormProps) => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface FilterFormProps extends FilterFormBaseProps {}
+export type FilterFormProps = FilterFormBaseProps;
 
 /**
  * @deprecated Use FilterFormBase from `ra-core` once available.
  */
+type FilterElementProps = {
+  source: string;
+  label?: React.ReactNode;
+  defaultValue?: unknown;
+  alwaysOn?: boolean;
+  size?: "small" | "medium" | "large" | string;
+  disabled?: boolean;
+};
+
+type FilterElementType = React.ReactElement<FilterElementProps>;
+
+const isFilterElement = (
+  element: ReactNode,
+): element is FilterElementType => isValidElement(element);
+
 export const FilterFormBase = (props: FilterFormBaseProps) => {
   const { filters } = props;
   const resource = useResourceContext(props);
   const { displayedFilters = {}, filterValues, hideFilter } = useListContext();
+  const validFilters = (filters ?? []).filter(isFilterElement);
 
   useEffect(() => {
-    if (!filters) return;
-    filters
-      .filter((filterElement) => isValidElement(filterElement))
-      .forEach((filter) => {
-        if (
-          (filter.props as any).alwaysOn &&
-          (filter.props as any).defaultValue
-        ) {
-          throw new Error(
-            "Cannot use alwaysOn and defaultValue on a filter input. Please set the filterDefaultValues props on the <List> element instead.",
-          );
-        }
-      });
-  }, [filters]);
+    validFilters.forEach((filter) => {
+      if (filter.props.alwaysOn && filter.props.defaultValue) {
+        throw new Error(
+          "Cannot use alwaysOn and defaultValue on a filter input. Please set the filterDefaultValues props on the <List> element instead.",
+        );
+      }
+    });
+  }, [validFilters]);
 
   const getShownFilters = () => {
-    if (!filters) return [];
     const values = filterValues;
-    return filters
-      .filter((filterElement) => isValidElement(filterElement))
-      .filter((filterElement) => {
-        const filterValue = get(values, (filterElement.props as any).source);
-        return (
-          (filterElement.props as any).alwaysOn ||
-          displayedFilters[(filterElement.props as any).source] ||
-          !isEmptyValue(filterValue)
-        );
-      });
+    return validFilters.filter((filterElement) => {
+      const filterValue = get(values, filterElement.props.source);
+      return (
+        filterElement.props.alwaysOn ||
+        displayedFilters[filterElement.props.source] ||
+        !isEmptyValue(filterValue)
+      );
+    });
   };
 
   const handleHide = useCallback(
@@ -104,7 +110,7 @@ export const FilterFormBase = (props: FilterFormBaseProps) => {
     <>
       {getShownFilters().map((filterElement) => (
         <FilterFormInput
-          key={filterElement.key || (filterElement.props as any).source}
+          key={filterElement.key ?? filterElement.props.source}
           filterElement={filterElement}
           handleHide={handleHide}
           resource={resource}
@@ -114,11 +120,14 @@ export const FilterFormBase = (props: FilterFormBaseProps) => {
   );
 };
 
-const sanitizeRestProps = ({
-  hasCreate: _hasCreate,
-  resource: _resource,
-  ...props
-}: Partial<FilterFormBaseProps> & { hasCreate?: boolean }) => props;
+const sanitizeRestProps = (
+  props: Partial<FilterFormBaseProps> & { hasCreate?: boolean },
+) => {
+  const { hasCreate, resource, ...rest } = props;
+  void hasCreate;
+  void resource;
+  return rest;
+};
 
 export type FilterFormBaseProps = Omit<
   HtmlHTMLAttributes<HTMLFormElement>,
@@ -142,14 +151,18 @@ const StyledForm = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
   );
 };
 
-const isEmptyValue = (filterValue: any): boolean => {
+const isEmptyValue = (filterValue: unknown): boolean => {
   if (filterValue === "" || filterValue == null) return true;
 
   // If one of the value leaf is not empty
   // the value is considered not empty
-  if (typeof filterValue === "object") {
+  if (
+    typeof filterValue === "object" &&
+    filterValue !== null &&
+    !Array.isArray(filterValue)
+  ) {
     return Object.keys(filterValue).every((key) =>
-      isEmptyValue(filterValue[key]),
+      isEmptyValue((filterValue as Record<string, unknown>)[key]),
     );
   }
 
@@ -195,7 +208,7 @@ export const FilterFormInput = (inProps: FilterFormInputProps) => {
 };
 
 export interface FilterFormInputProps {
-  filterElement: React.ReactElement<any>;
+  filterElement: FilterElementType;
   handleHide: (event: React.MouseEvent<HTMLElement>) => void;
   className?: string;
   resource?: string;
@@ -213,6 +226,7 @@ export const FilterButton = (props: FilterButtonProps) => {
     ...rest
   } = props;
   const filters = useFilterContext() || filtersProp;
+  const validFilters = (filters ?? []).filter(isFilterElement);
   const resource = useResourceContext(props);
   const translate = useTranslate();
   if (!resource && !disableSaveQuery) {
@@ -249,13 +263,18 @@ export const FilterButton = (props: FilterButtonProps) => {
     );
   }
 
-  const allTogglableFilters = filters.filter(
-    (filterElement) =>
-      isValidElement(filterElement) && !(filterElement.props as any).alwaysOn,
+  const allTogglableFilters = validFilters.filter(
+    (filterElement) => !filterElement.props.alwaysOn,
   );
 
   const handleShow = useCallback(
-    ({ source, defaultValue }: { source: string; defaultValue: any }) => {
+    ({
+      source,
+      defaultValue,
+    }: {
+      source: string;
+      defaultValue: unknown;
+    }) => {
       showFilter(source, defaultValue === "" ? undefined : defaultValue);
       // We have to fallback to imperative code because the new FilterFormInput
       // has no way of knowing it has just been displayed (and thus that it should focus its input)
@@ -483,12 +502,13 @@ export const FilterButtonMenuItem = React.forwardRef<
     </div>
   );
 });
+FilterButtonMenuItem.displayName = "FilterButtonMenuItem";
 
 export interface FilterButtonMenuItemProps {
-  filter: React.ReactElement<any>;
+  filter: FilterElementType;
   displayed: boolean;
 
-  onShow: (params: { source: string; defaultValue: any }) => void;
+  onShow: (params: { source: string; defaultValue: unknown }) => void;
   onHide: (params: { source: string }) => void;
   resource?: string;
   autoFocus?: boolean;

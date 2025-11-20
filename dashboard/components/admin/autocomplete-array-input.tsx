@@ -33,12 +33,12 @@ export const AutocompleteArrayInput = (
     ChoicesProps & {
       className?: string;
       disableValue?: string;
-      filterToQuery?: (searchText: string) => any;
+      filterToQuery?: (searchText: string) => Record<string, unknown>;
       translateChoice?: boolean;
       placeholder?: string;
       inputText?:
         | React.ReactNode
-        | ((option: any | undefined) => React.ReactNode);
+        | ((option: unknown | undefined) => React.ReactNode);
     },
 ) => {
   const { filterToQuery = DefaultFilterToQuery, inputText } = props;
@@ -66,9 +66,9 @@ export const AutocompleteArrayInput = (
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
 
-  const handleUnselect = useEvent((choice: any) => {
+  const handleUnselect = useEvent((choice: unknown) => {
     field.onChange(
-      field.value.filter((v: any) => v !== getChoiceValue(choice)),
+      field.value.filter((value: unknown) => value !== getChoiceValue(choice)),
     );
   });
 
@@ -80,7 +80,6 @@ export const AutocompleteArrayInput = (
           field.onChange(field.value.slice(0, -1));
         }
       }
-      // This is not a default behavior of the <input /> field
       if (e.key === "Escape") {
         input.blur();
       }
@@ -96,7 +95,7 @@ export const AutocompleteArrayInput = (
   const [filterValue, setFilterValue] = React.useState("");
 
   const getInputText = useCallback(
-    (selectedChoice: any) => {
+    (selectedChoice: unknown) => {
       if (typeof inputText === "function") {
         return inputText(selectedChoice);
       }
@@ -156,14 +155,11 @@ export const AutocompleteArrayInput = (
                   </button>
                 </Badge>
               ))}
-              {/* Avoid having the "Search" Icon by not using CommandInput */}
               <CommandPrimitive.Input
                 ref={inputRef}
                 value={filterValue}
                 onValueChange={(filter) => {
                   setFilterValue(filter);
-                  // We don't want the ChoicesContext to filter the choices if the input
-                  // is not from a reference as it would also filter out the selected values
                   if (isFromReference) {
                     setFilters(filterToQuery(filter), undefined, true);
                   }

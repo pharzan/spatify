@@ -67,9 +67,9 @@ const ShowViewGuesser = (props: { enableLog?: boolean }) => {
         )
         .sort();
 
-      // eslint-disable-next-line no-console
-      console.log(
-        `Guessed Show:
+      if (enableLog) {
+        console.log(
+          `Guessed Show:
 
 ${components
   .map(
@@ -85,7 +85,8 @@ export const ${capitalize(singularize(resource))}Show = () => (
 ${inferredChild.getRepresentation()}
     </Show>
 );`,
-      );
+        );
+      }
     }
   }, [record, child, resource, enableLog]);
 

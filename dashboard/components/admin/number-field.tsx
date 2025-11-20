@@ -3,7 +3,7 @@ import { useFieldValue, useTranslate } from "ra-core";
 import type { FieldProps } from "@/lib/field.type";
 
 export const NumberField = <
-  RecordType extends Record<string, any> = Record<string, any>,
+  RecordType extends Record<string, unknown> = Record<string, unknown>,
 >({
   defaultValue,
   source,
@@ -14,7 +14,7 @@ export const NumberField = <
   options,
   ...rest
 }: NumberFieldProps<RecordType>) => {
-  let value = useFieldValue({ defaultValue, source, record });
+  let value: unknown = useFieldValue({ defaultValue, source, record });
   const translate = useTranslate();
 
   if (value == null) {
@@ -43,16 +43,18 @@ export const NumberField = <
 };
 
 export interface NumberFieldProps<
-  RecordType extends Record<string, any> = Record<string, any>,
+  RecordType extends Record<string, unknown> = Record<string, unknown>,
 > extends FieldProps<RecordType>,
     HTMLAttributes<HTMLSpanElement> {
   locales?: string | string[];
   options?: object;
-  transform?: (value: any) => number;
+  transform?: (value: unknown) => number;
 }
 
-const defaultTransform = (value: any) =>
-  value && typeof value === "string" && !isNaN(value as any) ? +value : value;
+const defaultTransform = (value: unknown) =>
+  value && typeof value === "string" && !isNaN(Number(value))
+    ? Number(value)
+    : value;
 
 const hasNumberFormat = !!(
   typeof Intl === "object" &&

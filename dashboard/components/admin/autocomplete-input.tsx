@@ -38,6 +38,8 @@ import {
   useSupportCreateSuggestion,
 } from "@/hooks/useSupportCreateSuggestion";
 
+type Choice = ChoicesProps["choices"] extends Array<infer C> ? C : unknown;
+
 export const AutocompleteInput = (
   props: Omit<InputProps, "source"> &
     Omit<SupportCreateSuggestionOptions, "handleChange" | "filter"> &
@@ -45,12 +47,12 @@ export const AutocompleteInput = (
     ChoicesProps & {
       className?: string;
       disableValue?: string;
-      filterToQuery?: (searchText: string) => any;
+      filterToQuery?: (searchText: string) => Record<string, unknown>;
       translateChoice?: boolean;
       placeholder?: string;
       inputText?:
         | React.ReactNode
-        | ((option: any | undefined) => React.ReactNode);
+        | ((option: Choice | undefined) => React.ReactNode);
     },
 ) => {
   const {
@@ -93,7 +95,7 @@ export const AutocompleteInput = (
   );
 
   const getInputText = useCallback(
-    (selectedChoice: any) => {
+    (selectedChoice: Choice | undefined) => {
       if (typeof inputText === "function") {
         return inputText(selectedChoice);
       }
@@ -113,32 +115,19 @@ export const AutocompleteInput = (
     }
   });
 
-  const handleChange = useCallback(
-    (choice: any) => {
-      if (field.value === getChoiceValue(choice) && !isRequired) {
-        field.onChange("");
-        setFilterValue("");
-        if (isFromReference) {
-          setFilters(filterToQuery(""));
-        }
-        setOpen(false);
-        return;
+  const handleChange = useEvent((choice: Choice) => {
+    if (field.value === getChoiceValue(choice) && !isRequired) {
+      field.onChange("");
+      setFilterValue("");
+      if (isFromReference) {
+        setFilters(filterToQuery(""));
       }
-      field.onChange(getChoiceValue(choice));
       setOpen(false);
-    },
-    [
-      field.value,
-      field.onChange,
-      getChoiceValue,
-      isRequired,
-      setFilterValue,
-      isFromReference,
-      setFilters,
-      filterToQuery,
-      setOpen,
-    ],
-  );
+      return;
+    }
+    field.onChange(getChoiceValue(choice));
+    setOpen(false);
+  });
 
   const {
     getCreateItem,

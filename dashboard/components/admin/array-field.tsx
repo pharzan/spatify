@@ -6,7 +6,7 @@ export const ArrayField = <RecordType extends RaRecord = RaRecord>(
   props: ArrayFieldProps<RecordType>,
 ) => {
   const { children, resource, perPage, sort, filter } = props;
-  const data = useFieldValue(props) || emptyArray;
+  const data = useFieldValue(props) || [];
   const listContext = useList({ data, resource, perPage, sort, filter });
 
   return (
@@ -20,6 +20,3 @@ export type ArrayFieldProps<
   UseFieldValueOptions<RecordType> & {
     children?: ReactNode;
   };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const emptyArray: any[] = [];

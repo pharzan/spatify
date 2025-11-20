@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import type { InferredTypeMap } from "ra-core";
 import {
@@ -66,7 +66,6 @@ const EditViewGuesser = (props: { enableLog?: boolean }) => {
         )
         .sort();
 
-      // eslint-disable-next-line no-console
       console.log(
         `Guessed Edit:
 
@@ -91,12 +90,21 @@ ${representation}
   return <EditView {...rest}>{child}</EditView>;
 };
 
+type RepresentationChild = { getRepresentation: () => string };
+
+type ReferenceFieldProps = {
+  source: string;
+  reference?: string;
+} & Record<string, unknown>;
+
 const editFieldTypes: InferredTypeMap = {
   form: {
-    component: (props: any) => <SimpleForm {...props} />,
+    component: (props: ComponentProps<typeof SimpleForm>) => (
+      <SimpleForm {...props} />
+    ),
     representation: (
-      _props: any,
-      children: { getRepresentation: () => string }[],
+      _props: Record<string, unknown>,
+      children: RepresentationChild[],
     ) => `        <SimpleForm>
 ${children
   .map((child) => `            ${child.getRepresentation()}`)
@@ -104,28 +112,36 @@ ${children
         </SimpleForm>`,
   },
   reference: {
-    component: (props: any) => (
+    component: (props: ReferenceFieldProps) => (
       <ReferenceInput source={props.source} reference={props.reference}>
         <AutocompleteInput />
       </ReferenceInput>
     ),
-    representation: (props: any) =>
+    representation: (props: ReferenceFieldProps) =>
       `<ReferenceInput source="${props.source}" reference="${props.reference}">
                   <AutocompleteInput />
               </ReferenceInput>`,
   },
   referenceArray: {
-    component: (props: any) => <ReferenceArrayInput {...props} />,
-    representation: (props: any) =>
+    component: (props: ComponentProps<typeof ReferenceArrayInput>) => (
+      <ReferenceArrayInput {...props} />
+    ),
+    representation: (props: ReferenceFieldProps) =>
       `<ReferenceArrayInput source="${props.source}" reference="${props.reference}" />`,
   },
   boolean: {
-    component: (props: any) => <BooleanInput {...props} />,
-    representation: (props: any) => `<BooleanInput source="${props.source}" />`,
+    component: (props: ComponentProps<typeof BooleanInput>) => (
+      <BooleanInput {...props} />
+    ),
+    representation: (props: ReferenceFieldProps) =>
+      `<BooleanInput source="${props.source}" />`,
   },
   string: {
-    component: (props: any) => <TextInput {...props} />,
-    representation: (props: any) => `<TextInput source="${props.source}" />`,
+    component: (props: ComponentProps<typeof TextInput>) => (
+      <TextInput {...props} />
+    ),
+    representation: (props: ReferenceFieldProps) =>
+      `<TextInput source="${props.source}" />`,
   },
 };
 
