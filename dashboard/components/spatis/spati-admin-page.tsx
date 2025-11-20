@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/components/auth/auth-context";
 import {
   useAmenitiesQuery,
   useCreateAmenityMutation,
@@ -66,6 +67,8 @@ export const SpatiAdminPage = () => {
     },
   });
   const deleteAmenityMutation = useDeleteAmenityMutation();
+
+  const { logout } = useAuth();
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
   const mutationError = createMutation.error || updateMutation.error || deleteMutation.error;
@@ -139,11 +142,21 @@ export const SpatiAdminPage = () => {
   return (
     <div className="bg-muted/40 min-h-screen px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Späti Admin</h1>
-          <p className="text-muted-foreground mt-1">
-            Create, update, and delete Späti locations backed by the REST API.
-          </p>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">Späti Admin</h1>
+            <p className="text-muted-foreground mt-1">
+              Create, update, and delete Späti locations backed by the REST API.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => {
+              void logout();
+            }}
+          >
+            Sign out
+          </Button>
         </div>
         {error ? (
           <Alert variant="destructive">
