@@ -4,10 +4,13 @@ import { config } from './config/environment.js';
 import { registerSwagger } from './plugins/swagger.js';
 import { db } from './db/client.js';
 import { registerAdminSpatiRoutes } from './routes/adminSpatiRoutes.js';
+import { registerAdminAmenityRoutes } from './routes/adminAmenityRoutes.js';
 import { registerSpatiRoutes } from './routes/spatiRoutes.js';
 import { PostgresSpatiRepository } from './repositories/spatiRepository.js';
+import { PostgresAmenityRepository } from './repositories/amenityRepository.js';
 import { SpatiAdminService } from './services/spatiAdminService.js';
 import { SpatiService } from './services/spatiService.js';
+import { AmenityAdminService } from './services/amenityAdminService.js';
 import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 export const buildServer = async (): Promise<FastifyInstance> => {
   const app = Fastify({
@@ -20,11 +23,16 @@ export const buildServer = async (): Promise<FastifyInstance> => {
   });
   await registerSwagger(app);
 
-  const repository = new PostgresSpatiRepository(db);
-  const spatiService = new SpatiService(repository);
-  const spatiAdminService = new SpatiAdminService(repository);
+  const spatiRepository = new PostgresSpatiRepository(db);
+  const amenityRepository = new PostgresAmenityRepository(db);
+
+  const spatiService = new SpatiService(spatiRepository);
+  const spatiAdminService = new SpatiAdminService(spatiRepository);
+  const amenityAdminService = new AmenityAdminService(amenityRepository);
+
   registerSpatiRoutes(app, spatiService);
   registerAdminSpatiRoutes(app, spatiAdminService);
+  registerAdminAmenityRoutes(app, amenityAdminService);
 
   return app;
 };

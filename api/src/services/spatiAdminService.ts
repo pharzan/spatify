@@ -8,16 +8,23 @@ export class SpatiAdminService {
   constructor(private readonly repository: SpatiRepository) {}
 
   async createSpati(input: SpatiLocationInput): Promise<SpatiLocation> {
-    const record = await this.repository.create({
-      id: randomUUID(),
-      ...mapSpatiLocationInputToRecord(input),
-    });
+    const record = await this.repository.create(
+      {
+        id: randomUUID(),
+        ...mapSpatiLocationInputToRecord(input),
+      },
+      input.amenityIds,
+    );
 
     return mapRecordToSpatiLocation(record);
   }
 
   async updateSpati(id: string, input: SpatiLocationInput): Promise<SpatiLocation> {
-    const record = await this.repository.update(id, mapSpatiLocationInputToRecord(input));
+    const record = await this.repository.update(
+      id,
+      mapSpatiLocationInputToRecord(input),
+      input.amenityIds,
+    );
 
     if (!record) {
       throw new SpatiNotFoundError(id);
