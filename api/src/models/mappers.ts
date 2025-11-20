@@ -1,5 +1,5 @@
-import { SpatiLocation } from './api.js';
-import { SpatiLocationRecord } from './db.js';
+import { SpatiLocationRecord } from '@/db/schema.js';
+import { SpatiLocation, SpatiLocationInput } from './api.js';
 
 export const mapRecordToSpatiLocation = (record: SpatiLocationRecord): SpatiLocation => ({
   id: record.id,
@@ -12,3 +12,17 @@ export const mapRecordToSpatiLocation = (record: SpatiLocationRecord): SpatiLoca
   type: record.store_type,
   rating: record.rating,
 });
+
+export const mapSpatiLocationInputToRecord =(input: SpatiLocationInput)=>{
+      return {
+      store_name: input.name,
+      description: input.description,
+      lat: input.latitude,
+      lng: input.longitude,
+      address: input.address,
+      opening_hours: input.hours,
+      store_type: input.type,
+      rating: input.rating,
+    };
+
+}

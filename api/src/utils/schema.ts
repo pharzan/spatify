@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-export const cloneJsonSchema = <T>(schema: T): T => JSON.parse(JSON.stringify(schema));
-
 type JsonSchema = Record<string, unknown>;
 
 interface SchemaWithComponents extends JsonSchema {

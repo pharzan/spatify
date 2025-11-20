@@ -1,6 +1,6 @@
 import { FastifyError, FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { type FastifyZodOpenApiSchema } from 'fastify-zod-openapi';
+import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 import { SpatiLocationInputSchema, SpatiLocationSchema } from '../models/api.js';
 import { SpatiAdminService } from '../services/spatiAdminService.js';
 import { SpatiNotFoundError } from '../services/errors.js';
@@ -30,52 +30,54 @@ export const registerAdminSpatiRoutes = (
   fastify: FastifyInstance,
   service: SpatiAdminService,
 ): void => {
-  const spatiLocationSchemaRef = registerSchema(adminSpatiLocationSchema, 'AdminSpatiLocation');
+  const app = fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>();
+  const spatiLocationSchemaRef = registerSchema(
+    adminSpatiLocationSchema,
+    'AdminSpatiLocation',
+  );
   const spatiLocationInputSchemaRef = registerSchema(
     adminSpatiLocationInputSchema,
     'AdminSpatiLocationInput',
   );
-  const spatiIdParamSchemaRef = registerSchema(adminSpatiIdParamSchema, 'AdminSpatiIdParams');
+  const spatiIdParamSchemaRef = registerSchema(
+    adminSpatiIdParamSchema,
+    'AdminSpatiIdParams',
+  );
 
-  const createSchema = {
-    tags: adminTags,
-    summary: 'Create a Späti location',
-    body: spatiLocationInputSchemaRef,
-    response: {
-      201: spatiLocationSchemaRef,
-    },
-  } satisfies FastifyZodOpenApiSchema;
-
-  fastify.post(
+  app.post(
     '/admin/spatis',
     {
-      schema: createSchema,
+      schema: {
+        tags: adminTags,
+        summary: 'Create a Späti location',
+        body: spatiLocationInputSchemaRef,
+        response: {
+          201: spatiLocationSchemaRef,
+        },
+      },
     },
     async (request, reply) => {
-      const body = SpatiLocationInputSchema.parse(request.body);
-      const spati = await service.createSpati(body);
+      const spati = await service.createSpati(request.body);
       return reply.code(201).send(spati);
     },
   );
 
-  const updateSchema = {
-    tags: adminTags,
-    summary: 'Update a Späti location',
-    params: spatiIdParamSchemaRef,
-    body: spatiLocationInputSchemaRef,
-    response: {
-      200: spatiLocationSchemaRef,
-    },
-  } satisfies FastifyZodOpenApiSchema;
-
-  fastify.put(
+  app.put(
     '/admin/spatis/:id',
     {
-      schema: updateSchema,
+      schema: {
+        tags: adminTags,
+        summary: 'Update a Späti location',
+        params: spatiIdParamSchemaRef,
+        body: spatiLocationInputSchemaRef,
+        response: {
+          200: spatiLocationSchemaRef,
+        },
+      },
     },
     async (request) => {
-      const { id } = spatiIdParamSchema.parse(request.params);
-      const body = SpatiLocationInputSchema.parse(request.body);
+      const { id } = request.params;
+      const body = request.body;
 
       try {
         return await service.updateSpati(id, body);
@@ -85,26 +87,20 @@ export const registerAdminSpatiRoutes = (
     },
   );
 
-  const deleteSchema = {
-    tags: adminTags,
-    summary: 'Delete a Späti location',
-    params: spatiIdParamSchemaRef,
-    response: {
-      204: z
-        .null()
-        .meta({
-          description: 'Späti deleted',
-        }),
-    },
-  } satisfies FastifyZodOpenApiSchema;
-
-  fastify.delete(
+  app.delete(
     '/admin/spatis/:id',
     {
-      schema: deleteSchema,
+      schema: {
+        tags: adminTags,
+        summary: 'Delete a Späti location',
+        params: spatiIdParamSchemaRef,
+        response: {
+          204: z.null().describe('Späti deleted'),
+        },
+      },
     },
     async (request, reply) => {
-      const { id } = spatiIdParamSchema.parse(request.params);
+      const { id } = request.params;
 
       try {
         await service.deleteSpati(id);

@@ -1,7 +1,6 @@
 import { asc, eq } from 'drizzle-orm';
 import type { DatabaseClient } from '../db/client.js';
-import { spatiLocations } from '../db/schema.js';
-import { NewSpatiLocationRecord, SpatiLocationRecord } from '../models/db.js';
+import { NewSpatiLocationRecord, SpatiLocationRecord, spatiLocations } from '../db/schema.js';
 
 export interface SpatiRepository {
   findAll(): Promise<SpatiLocationRecord[]>;
