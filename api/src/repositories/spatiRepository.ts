@@ -6,10 +6,7 @@ export interface SpatiRepository {
   findAll(): Promise<SpatiLocationRecord[]>;
   findById(id: string): Promise<SpatiLocationRecord | null>;
   create(data: NewSpatiLocationRecord): Promise<SpatiLocationRecord>;
-  update(
-    id: string,
-    data: Omit<NewSpatiLocationRecord, 'id'>,
-  ): Promise<SpatiLocationRecord | null>;
+  update(id: string, data: Omit<NewSpatiLocationRecord, 'id'>): Promise<SpatiLocationRecord | null>;
   delete(id: string): Promise<boolean>;
 }
 
@@ -21,10 +18,7 @@ export class PostgresSpatiRepository implements SpatiRepository {
   }
 
   async findById(id: string): Promise<SpatiLocationRecord | null> {
-    const [record] = await this.db
-      .select()
-      .from(spatiLocations)
-      .where(eq(spatiLocations.id, id));
+    const [record] = await this.db.select().from(spatiLocations).where(eq(spatiLocations.id, id));
 
     return record ?? null;
   }

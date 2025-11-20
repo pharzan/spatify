@@ -6,14 +6,14 @@ The project utilizes a layered architecture, ensuring separation of concerns bet
 
 ## 🛠 Tech Stack
 
-  * **Runtime:** Node.js (ES Modules)
-  * **Framework:** [Fastify](https://www.fastify.io/) (v5)
-  * **Language:** TypeScript
-  * **Database:** PostgreSQL
-  * **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
-  * **Validation:** [Zod](https://zod.dev/)
-  * **API Docs:** [Fastify Zod OpenAPI](https://github.com/samchungy/zod-openapi) (Swagger UI)
-  * **Tooling:** `tsx` for development, `make` for workflow automation.
+- **Runtime:** Node.js (ES Modules)
+- **Framework:** [Fastify](https://www.fastify.io/) (v5)
+- **Language:** TypeScript
+- **Database:** PostgreSQL
+- **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
+- **Validation:** [Zod](https://zod.dev/)
+- **API Docs:** [Fastify Zod OpenAPI](https://github.com/samchungy/zod-openapi) (Swagger UI)
+- **Tooling:** `tsx` for development, `make` for workflow automation.
 
 ## 📂 Project Structure & Architecture
 
@@ -38,38 +38,34 @@ src
 ### Architectural Layers
 
 1.  **Routes (`src/routes`)**:
-
-      * The entry point for HTTP requests.
-      * Defines endpoints (e.g., `/spatis`, `/admin/spatis`).
-      * Uses **Zod** schemas to validate headers, params, and body *before* execution.
-      * Calls the **Service** layer.
-      * *Key files:* `spatiRoutes.ts` (Public), `adminSpatiRoutes.ts` (Protected).
+    - The entry point for HTTP requests.
+    - Defines endpoints (e.g., `/spatis`, `/admin/spatis`).
+    - Uses **Zod** schemas to validate headers, params, and body _before_ execution.
+    - Calls the **Service** layer.
+    - _Key files:_ `spatiRoutes.ts` (Public), `adminSpatiRoutes.ts` (Protected).
 
 2.  **Services (`src/services`)**:
-
-      * Contains the business logic.
-      * Handles data transformation and error throwing (e.g., `SpatiNotFoundError`).
-      * Agnostic of the HTTP transport layer (doesn't know about `req` or `res`).
-      * Calls the **Repository** layer.
+    - Contains the business logic.
+    - Handles data transformation and error throwing (e.g., `SpatiNotFoundError`).
+    - Agnostic of the HTTP transport layer (doesn't know about `req` or `res`).
+    - Calls the **Repository** layer.
 
 3.  **Repositories (`src/repositories`)**:
-
-      * The only layer that interacts directly with the Database.
-      * Uses **Drizzle ORM** to execute SQL queries.
-      * Returns raw database records.
+    - The only layer that interacts directly with the Database.
+    - Uses **Drizzle ORM** to execute SQL queries.
+    - Returns raw database records.
 
 4.  **Models & Mappers (`src/models`)**:
-
-      * **Strict Separation:** The API models (what the user sees) are decoupled from the DB models (how data is stored).
-      * **Mappers:** Explicit functions convert DB records (snake\_case) to API objects (camelCase).
+    - **Strict Separation:** The API models (what the user sees) are decoupled from the DB models (how data is stored).
+    - **Mappers:** Explicit functions convert DB records (snake_case) to API objects (camelCase).
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-  * **Node.js** (v20+ recommended)
-  * **Docker** (For running the local PostgreSQL database)
-  * **npm**
+- **Node.js** (v20+ recommended)
+- **Docker** (For running the local PostgreSQL database)
+- **npm**
 
 ### 1\. Installation
 
@@ -119,24 +115,32 @@ The API will run at `http://0.0.0.0:3333` (or the port defined in `.env`).
 
 The project auto-generates OpenAPI v3 documentation.
 
-  * **Swagger UI:** Visit `http://localhost:3333/docs` to view endpoints and test the API interactively.
-  * **JSON Spec:** Available at `http://localhost:3333/docs/json-app`.
+- **Swagger UI:** Visit `http://localhost:3333/docs` to view endpoints and test the API interactively.
+- **JSON Spec:** Available at `http://localhost:3333/docs/json-app`.
 
-*Note: The Swagger configuration includes a filter to hide specific Admin routes or tags depending on the configuration in `src/plugins/swagger.ts`.*
+_Note: The Swagger configuration includes a filter to hide specific Admin routes or tags depending on the configuration in `src/plugins/swagger.ts`._
 
 ## 🧰 Development Commands
 
 The project uses a `Makefile` to simplify common tasks:
 
-| Command | Description |
-| :--- | :--- |
-| `make run` | Starts the dev server. |
-| `make build` | Compiles TypeScript to JavaScript (`/dist`). |
-| `make db-up` | Starts the Docker PostgreSQL container. |
-| `make db-down` | Stops and removes the Docker container. |
-| `make db-migrate` | Pushes schema changes to the DB (Drizzle Push). |
-| `make db-generate`| Generates SQL migration files based on schema changes. |
-| `make db-studio` | Opens Drizzle Studio in the browser to view data. |
+| Command                | Description                                                      |
+| :--------------------- | :--------------------------------------------------------------- |
+| `make run`             | Starts the dev server.                                           |
+| `make build`           | Compiles TypeScript to JavaScript (`/dist`).                     |
+| `make db-up`           | Starts the Docker PostgreSQL container.                          |
+| `make db-down`         | Stops and removes the Docker container.                          |
+| `make db-migrate`      | Pushes schema changes to the DB (Drizzle Push).                  |
+| `make db-generate`     | Generates SQL migration files based on schema changes.           |
+| `make db-studio`       | Opens Drizzle Studio in the browser to view data.                |
+| `make lint`            | Runs ESLint using the Makefile wrapper.                          |
+| `make lint-fix`        | Runs ESLint with `--fix` via the Makefile wrapper.               |
+| `make format`          | Formats the repository using Prettier via Makefile.              |
+| `make format-check`    | Checks formatting using Prettier via Makefile.                   |
+| `npm run lint`         | Runs ESLint against all TypeScript sources.                      |
+| `npm run lint:fix`     | Runs ESLint with `--fix` to automatically correct simple issues. |
+| `npm run format`       | Formats the repository with Prettier.                            |
+| `npm run format:check` | Validates the repository formatting without writing changes.     |
 
 ## 📦 Database Schema
 
@@ -158,5 +162,5 @@ CREATE TABLE "spati_locations" (
 
 ## 🔒 Security & Validation
 
-  * **Input Validation:** All incoming data is validated against Zod schemas. If the input is invalid, Fastify automatically returns a 400 Bad Request.
-  * **Type Safety:** TypeScript ensures that the data flowing from the DB -\> Repository -\> Service -\> API matches the expected types.
+- **Input Validation:** All incoming data is validated against Zod schemas. If the input is invalid, Fastify automatically returns a 400 Bad Request.
+- **Type Safety:** TypeScript ensures that the data flowing from the DB -\> Repository -\> Service -\> API matches the expected types.

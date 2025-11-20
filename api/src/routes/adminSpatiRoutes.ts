@@ -31,18 +31,12 @@ export const registerAdminSpatiRoutes = (
   service: SpatiAdminService,
 ): void => {
   const app = fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>();
-  const spatiLocationSchemaRef = registerSchema(
-    adminSpatiLocationSchema,
-    'AdminSpatiLocation',
-  );
+  const spatiLocationSchemaRef = registerSchema(adminSpatiLocationSchema, 'AdminSpatiLocation');
   const spatiLocationInputSchemaRef = registerSchema(
     adminSpatiLocationInputSchema,
     'AdminSpatiLocationInput',
   );
-  const spatiIdParamSchemaRef = registerSchema(
-    adminSpatiIdParamSchema,
-    'AdminSpatiIdParams',
-  );
+  const spatiIdParamSchemaRef = registerSchema(adminSpatiIdParamSchema, 'AdminSpatiIdParams');
 
   app.post(
     '/admin/spatis',

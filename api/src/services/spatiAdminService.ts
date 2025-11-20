@@ -5,7 +5,7 @@ import { SpatiRepository } from '../repositories/spatiRepository.js';
 import { SpatiNotFoundError } from './errors.js';
 
 export class SpatiAdminService {
-  constructor(private readonly repository: SpatiRepository) { }
+  constructor(private readonly repository: SpatiRepository) {}
 
   async createSpati(input: SpatiLocationInput): Promise<SpatiLocation> {
     const record = await this.repository.create({

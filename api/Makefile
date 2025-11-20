@@ -1,4 +1,4 @@
-.PHONY: dev build db-migrate db-generate db-studio db-up db-down
+.PHONY: dev build db-migrate db-generate db-studio db-up db-down lint lint-fix format format-check
 
 run:
 	npm run dev
@@ -20,3 +20,15 @@ db-up:
 
 db-down:
 	./scripts/dev-db.sh down
+
+lint:
+	npm run lint
+
+lint-fix:
+	npm run lint:fix
+
+format:
+	npm run format
+
+format-check:
+	npm run format:check

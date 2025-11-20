@@ -13,16 +13,15 @@ export const mapRecordToSpatiLocation = (record: SpatiLocationRecord): SpatiLoca
   rating: record.rating,
 });
 
-export const mapSpatiLocationInputToRecord =(input: SpatiLocationInput)=>{
-      return {
-      store_name: input.name,
-      description: input.description,
-      lat: input.latitude,
-      lng: input.longitude,
-      address: input.address,
-      opening_hours: input.hours,
-      store_type: input.type,
-      rating: input.rating,
-    };
-
-}
+export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
+  return {
+    store_name: input.name,
+    description: input.description,
+    lat: input.latitude,
+    lng: input.longitude,
+    address: input.address,
+    opening_hours: input.hours,
+    store_type: input.type,
+    rating: input.rating,
+  };
+};

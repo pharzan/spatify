@@ -7,16 +7,9 @@ import { registerSchema } from '../utils/schema.js';
 
 const spatiListSchema = z.array(SpatiLocationSchema);
 
-
-export const registerSpatiRoutes = (
-  fastify: FastifyInstance,
-  service: SpatiService,
-): void => {
-  const spatiLocationSchemaRef = registerSchema(SpatiLocationSchema, 'PublicSpatiLocation');
-  const spatiListSchemaRef = registerSchema(
-    spatiListSchema,
-    'PublicSpatiLocationsResponse',
-  );
+export const registerSpatiRoutes = (fastify: FastifyInstance, service: SpatiService): void => {
+  registerSchema(SpatiLocationSchema, 'PublicSpatiLocation');
+  const spatiListSchemaRef = registerSchema(spatiListSchema, 'PublicSpatiLocationsResponse');
 
   const listSchema = {
     tags: ['Spatis'],

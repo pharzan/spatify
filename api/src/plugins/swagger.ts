@@ -11,7 +11,16 @@ import {
 
 const ADMIN_REGEX = /admin/i;
 
-const OPERATION_HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'] as const;
+const OPERATION_HTTP_METHODS = [
+  'get',
+  'put',
+  'post',
+  'delete',
+  'options',
+  'head',
+  'patch',
+  'trace',
+] as const;
 
 const filterAdminSpec = (document: OpenAPIV3.Document): OpenAPIV3.Document => {
   const filteredDoc = JSON.parse(JSON.stringify(document)) as OpenAPIV3.Document;
@@ -29,8 +38,9 @@ const filterAdminSpec = (document: OpenAPIV3.Document): OpenAPIV3.Document => {
       }
 
       OPERATION_HTTP_METHODS.forEach((method) => {
-        const operation =
-          pathItem[method as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject | undefined;
+        const operation = pathItem[method as keyof OpenAPIV3.PathItemObject] as
+          | OpenAPIV3.OperationObject
+          | undefined;
         if (operation?.tags) {
           const nonAdminTags = operation.tags.filter((tag) => !ADMIN_REGEX.test(tag));
           if (nonAdminTags.length === 0) {
@@ -44,9 +54,7 @@ const filterAdminSpec = (document: OpenAPIV3.Document): OpenAPIV3.Document => {
   }
 
   if (Array.isArray(filteredDoc.tags)) {
-    filteredDoc.tags = filteredDoc.tags.filter(
-      (tag) => !tag?.name || !ADMIN_REGEX.test(tag.name),
-    );
+    filteredDoc.tags = filteredDoc.tags.filter((tag) => !tag?.name || !ADMIN_REGEX.test(tag.name));
   }
 
   const pruneComponentGroup = (components?: Record<string, unknown>): void => {
