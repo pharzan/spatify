@@ -1,130 +1,101 @@
 # Spätify App 🍻🗺️
 
-A React Native application built with **Expo** designed to help users locate "Spätis" (late-night convenience stores, popular in Berlin) on an interactive map. The app provides geolocation services, routing, and detailed information about specific store locations.
+A React Native application built with **Expo** that helps users locate "Spätis" (late-night convenience stores popular in Berlin) on an interactive, location-aware map.
 
 ## 🌟 Features
 
-  * **Interactive Map:** Built using `react-native-maps` with custom styling.
-  * **Geolocation:** Locates the user's current position using `expo-location`.
-  * **Search & Discovery:** Filter locations by name or address.
-  * **Routing:** Visualizes driving/walking routes from the user to a destination using `react-native-maps-directions`.
-  * **Location Details:** View ratings, opening hours, and descriptions for specific shops.
-  * **Data Management:** Uses `@tanstack/react-query` for efficient data fetching and caching.
+  * **Interactive Map:** `react-native-maps` renders stylized Google maps focused on Berlin.
+  * **Geolocation:** The `useUserLocation` hook wraps `expo-location` to request permission and read the device position.
+  * **Search & Discovery:** A searchable overlay lets users quickly jump to any Späti returned by the backend.
+  * **Location Details:** Selecting a marker shows a rich card with ratings, hours, address, and distance from the user.
+  * **Data Management:** `@tanstack/react-query` powers the `useSpatiQuery` hook for cached API access.
 
 ## 🏗️ Tech Stack
 
-  * **Framework:** [Expo](https://expo.dev/) (Managed Workflow)
+  * **Framework:** [Expo](https://expo.dev/) (managed workflow)
   * **Library:** [React Native](https://reactnative.dev/)
   * **Language:** TypeScript
   * **State/Data:** React Query (TanStack Query)
-  * **Maps:** Google Maps API via `react-native-maps`
+  * **Maps:** Google Maps via `react-native-maps`
 
 ## 📂 Project Structure
 
-The project follows a lean structure where the primary UI logic resides in the root, supported by specific helper scripts and generated types.
+UI, hooks, and constants now live under `src/` while generated API typings remain at the root:
 
 ```txt
 app/
-├── App.tsx                  # 📱 Main Application Entry & Monolithic UI Component
-├── app.config.js            # ⚙️ Expo Runtime Configuration (Env vars, Maps Key)
-├── data.ts                  # Mz Mock data for development/fallback
-├── index.ts                 # qc Entry point (Registers Root Component)
-├── assets/                  # 🖼️ Static assets (Icons, Splash screens)
-├── scripts/                 # 🛠️ Node.js helper scripts
-│   ├── configure-android-signing.mjs  # CI helper for Keystores
-│   └── generate-api-types.mjs         # OpenAPI Type Generator
+├── App.tsx                  # Minimal entry that renders <SpatiMap />
+├── app.config.js            # Expo config + Google Maps key injection
+├── index.ts                 # Registers the root component
+├── generated/
+│   └── api-types.ts         # OpenAPI generated types
+├── scripts/
+│   ├── configure-android-signing.mjs
+│   └── generate-api-types.mjs
 └── src/
-    └── generated/
-        └── api-types.ts     # TS Interfaces generated from OpenAPI spec
+    ├── components/
+    │   ├── Map/SpatiMarker.tsx
+    │   └── UI/{SearchBar.tsx, SpatiCard.tsx}
+    ├── constants/mapStyle.ts
+    └── hooks/{useSpatiQuery.ts, useUserLocation.ts}
 ```
 
 ## 🧱 Architecture
 
-The application architecture is currently **Single-View / Map-Centric**:
+1. **Entry Point:** `index.ts` registers `App.tsx`, which only wraps the map screen in a `QueryClientProvider`.
+2. **Presentation:** `SpatiMap` (inside `App.tsx`) composes the map, overlays, and card. All UI widgets live in `src/components`.
+3. **Hooks:** `useSpatiQuery` handles networking + typing, while `useUserLocation` encapsulates permissions and geolocation side effects.
+4. **Constants:** `GOOGLE_MAP_STYLE` contains the single map-style definition.
 
-1.  **Entry Point:** `index.ts` registers `App.tsx` via `registerRootComponent`.
-2.  **UI Layer (`App.tsx`):**
-      * Manages map state (`latitude`, `longitude`, `deltas`).
-      * Handles Location Permissions via `ExpoLocation`.
-      * Renders overlays: Search Bar (Top) and Location Details Card (Bottom).
-      * Animations: Uses `Animated` API for the user location pulse effect.
-3.  **Data Layer:**
-      * **Fetching:** Utilizes `useSpatisQuery` (custom hook wrapping React Query) to fetch location data.
-      * **Types:** Strictly typed using TypeScript interfaces generated from an OpenAPI spec (`src/generated/api-types.ts`).
-      * **Mock Data:** `data.ts` provides fallback static data for testing UI without a backend.
-4.  **External Services:**
-      * **Google Maps API:** Used for map tiles and the Directions API for routing lines.
+This keeps `App.tsx` declarative and easy to scan while every concern (API, location, UI pieces) lives in its own module.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
   * Node.js (LTS recommended)
-  * [Expo Go](https://www.google.com/search?q=https://expo.dev/client) app on your physical device, or an Android/iOS Emulator.
+  * [Expo Go](https://expo.dev/client) on a device, or an Android/iOS simulator.
 
 ### Installation
 
-1.  **Clone the repository:**
+```bash
+git clone <repository-url>
+cd app
+npm install
+```
 
-    ```bash
-    git clone <repository-url>
-    cd app
-    ```
+### Environment Configuration
 
-2.  **Install dependencies:**
+Create a `.env` file (or export the variables) containing:
 
-    ```bash
-    npm install
-    ```
+```bash
+EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_key
+EXPO_PUBLIC_API_BASE_URL=https://your-api.example.com
+```
 
-3.  **Environment Configuration:**
-    You must provide a Google Maps API Key. Create a `.env` file (or export variables) containing:
-
-    ```bash
-    EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key_here
-    ```
+Both variables are forward-declared as Expo “public” vars and are read automatically by Metro and `app.config.js`.
 
 ### Running the App
 
-  * **Start the development server:**
-    ```bash
-    npm run dev
-    ```
-  * **Run on Android Emulator:**
-    ```bash
-    npm run android
-    ```
-  * **Run on iOS Simulator:**
-    ```bash
-    npm run ios
-    ```
-  * **Run on Web:**
-    ```bash
-    npm run web
-    ```
+```bash
+npm run dev      # start Expo
+npm run android  # build & install on Android
+npm run ios      # build & install on iOS
+npm run web      # run web preview
+```
 
 ## 🛠️ Scripts & Tooling
 
-The `package.json` includes custom utility scripts located in the `scripts/` folder:
-
 | Command | Description |
 | :--- | :--- |
-| `npm run generate:api-types` | Fetches OpenAPI JSON from `localhost:3333` (default) and generates TypeScript interfaces into `src/generated/`. |
-| `npm run setup:android-signing` | Inject Keystore credentials into `gradle.properties` (Used primarily in CI/CD environments). |
+| `npm run generate:api-types` | Calls the OpenAPI generator script and refreshes TypeScript interfaces. |
+| `npm run setup:android-signing` | Helper for injecting keystore data (primarily CI). |
 
 ## 🔑 Key Configuration Files
 
-  * **`app.config.js`**: Dynamic configuration that reads the Google Maps API key from environment variables and configures bundle identifiers for iOS and Android.
-  * **`eas.json`**: Configuration for Expo Application Services (Build profiles for Development, Preview, and Production).
-  * **`AGENTS.md`**: Contains specific coding guidelines and conventions for AI agents or developers working on this repo.
+  * **`app.config.js`** – Uses the `.env` values to configure map API keys and native identifiers.
+  * **`eas.json`** – Profiles for building with Expo Application Services.
 
 -----
 
-### Next Steps for Development
-
-  * **Refactoring:** `App.tsx` is currently large; components like `SpatiMap`, `BottomCard`, and `SearchBar` should be extracted into a `src/components/` directory.
-  * **Testing:** No tests are currently implemented. Jest and React Native Testing Library should be set up.
-
------
-
-**Would you like me to extract the sub-components (Map, Card, Search) from `App.tsx` into separate files to improve the project structure?**
+Happy mapping! Feel free to extend the hooks/components pattern with new overlays or filters as the product grows.

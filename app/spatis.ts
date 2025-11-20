@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
-import type { components } from "./generated/api-types";
+import type { components } from "./src/generated/api-types";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
