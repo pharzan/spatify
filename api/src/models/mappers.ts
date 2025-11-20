@@ -25,6 +25,7 @@ export const mapRecordToSpatiLocation = (
 
 export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
   const { amenityIds: _amenityIds, ...spatiInput } = input;
+  void _amenityIds;
   return {
     store_name: spatiInput.name,
     description: spatiInput.description,

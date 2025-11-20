@@ -13,6 +13,7 @@ const amenityIdParamSchema = z.object({
 const amenityListSchema = z.array(AmenitySchema);
 
 const adminTags = ['Amenities Admin'];
+const adminSecurityRequirement = [{ AdminBearerAuth: [] as string[] }];
 
 const notFoundHandler = (error: unknown): never => {
   if (error instanceof AmenityNotFoundError) {
@@ -43,7 +44,9 @@ export const registerAdminAmenityRoutes = (
         response: {
           200: amenityListSchemaRef,
         },
+        security: adminSecurityRequirement,
       },
+      preHandler: app.authenticate,
     },
     async () => service.listAmenities(),
   );
@@ -58,7 +61,9 @@ export const registerAdminAmenityRoutes = (
         response: {
           201: amenitySchemaRef,
         },
+        security: adminSecurityRequirement,
       },
+      preHandler: app.authenticate,
     },
     async (request, reply) => {
       const amenity = await service.createAmenity(request.body);
@@ -77,7 +82,9 @@ export const registerAdminAmenityRoutes = (
         response: {
           200: amenitySchemaRef,
         },
+        security: adminSecurityRequirement,
       },
+      preHandler: app.authenticate,
     },
     async (request) => {
       const { id } = request.params;
@@ -101,7 +108,9 @@ export const registerAdminAmenityRoutes = (
         response: {
           204: z.null().describe('Amenity deleted'),
         },
+        security: adminSecurityRequirement,
       },
+      preHandler: app.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;

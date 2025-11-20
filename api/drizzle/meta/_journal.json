@@ -15,6 +15,13 @@
       "when": 1763651735403,
       "tag": "0001_first_meggan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763655757241,
+      "tag": "0002_bizarre_sabretooth",
+      "breakpoints": true
     }
   ]
 }

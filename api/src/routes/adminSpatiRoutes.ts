@@ -15,6 +15,7 @@ const adminSpatiLocationInputSchema = SpatiLocationInputSchema.clone();
 const adminSpatiIdParamSchema = spatiIdParamSchema.clone();
 
 const adminTags = ['Spatis Admin'];
+const adminSecurityRequirement = [{ AdminBearerAuth: [] as string[] }];
 
 const notFoundHandler = (error: unknown): never => {
   if (error instanceof SpatiNotFoundError) {
@@ -48,7 +49,9 @@ export const registerAdminSpatiRoutes = (
         response: {
           201: spatiLocationSchemaRef,
         },
+        security: adminSecurityRequirement,
       },
+      preHandler: app.authenticate,
     },
     async (request, reply) => {
       const spati = await service.createSpati(request.body);
@@ -67,7 +70,9 @@ export const registerAdminSpatiRoutes = (
         response: {
           200: spatiLocationSchemaRef,
         },
+        security: adminSecurityRequirement,
       },
+      preHandler: app.authenticate,
     },
     async (request) => {
       const { id } = request.params;
@@ -91,7 +96,9 @@ export const registerAdminSpatiRoutes = (
         response: {
           204: z.null().describe('Späti deleted'),
         },
+        security: adminSecurityRequirement,
       },
+      preHandler: app.authenticate,
     },
     async (request, reply) => {
       const { id } = request.params;

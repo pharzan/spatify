@@ -89,6 +89,16 @@ export const registerSwagger = async (app: FastifyInstance): Promise<void> => {
       },
       servers: [{ url: '/' }],
       tags: [{ name: 'Spatis', description: 'Operations about Späti locations' }],
+      components: {
+        securitySchemes: {
+          AdminBearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            description: 'Paste the token returned from POST /admin/auth/login',
+          },
+        },
+      },
     },
     ...fastifyZodOpenApiTransformers,
   };

@@ -35,3 +35,16 @@ export const SpatiLocationInputSchema = baseSpatiSchema.extend({
 export type SpatiLocationInput = z.infer<typeof SpatiLocationInputSchema>;
 export type Amenity = z.infer<typeof AmenitySchema>;
 export type AmenityInput = z.infer<typeof AmenityInputSchema>;
+
+export const AdminLoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+export type AdminLoginInput = z.infer<typeof AdminLoginSchema>;
+
+export const AdminAuthResponseSchema = z.object({
+  token: z.string().describe('Bearer token used for admin-only APIs'),
+});
+
+export type AdminAuthResponse = z.infer<typeof AdminAuthResponseSchema>;

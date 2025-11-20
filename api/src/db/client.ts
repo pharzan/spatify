@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import { config } from '../config/environment.js';
 
-const pool = new pg.Pool({
+export const pool = new pg.Pool({
   connectionString: config.databaseUrl,
 });
 

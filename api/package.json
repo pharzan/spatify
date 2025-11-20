@@ -13,12 +13,15 @@
     "format:check": "prettier --check .",
     "db:migrate": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "seed:admin": "tsx ./scripts/seed-admin.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
+    "@fastify/jwt": "^10.0.0",
     "@fastify/swagger": "^9.6.1",
     "@fastify/swagger-ui": "^5.2.3",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.7",
     "drizzle-orm": "^0.44.7",
@@ -26,9 +29,10 @@
     "fastify-zod-openapi": "^5.5.0",
     "pg": "^8.16.3",
     "zod": "^4.1.12",
-    "zod-to-json-schema": "^3.24.6"
+    "zod-to-json-schema": "^3.25.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.6",
     "@typescript-eslint/eslint-plugin": "^8.47.0",

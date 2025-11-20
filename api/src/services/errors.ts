@@ -11,3 +11,10 @@ export class AmenityNotFoundError extends Error {
     this.name = 'AmenityNotFoundError';
   }
 }
+
+export class AdminInvalidCredentialsError extends Error {
+  constructor() {
+    super('Invalid admin credentials.');
+    this.name = 'AdminInvalidCredentialsError';
+  }
+}

@@ -1,4 +1,11 @@
-import { doublePrecision, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
+import {
+  doublePrecision,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
 
 export const spatiLocations = pgTable('spati_locations', {
   id: text('id').primaryKey(),
@@ -32,8 +39,23 @@ export const spatiAmenities = pgTable(
   }),
 );
 
+export const admins = pgTable(
+  'admins',
+  {
+    id: text('id').primaryKey(),
+    email: text('email').notNull(),
+    passwordHash: text('password_hash').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    emailIdx: uniqueIndex('admins_email_idx').on(table.email),
+  }),
+);
+
 export type SpatiLocationRecord = typeof spatiLocations.$inferSelect;
 export type NewSpatiLocationRecord = typeof spatiLocations.$inferInsert;
 export type AmenityRecord = typeof amenities.$inferSelect;
 export type NewAmenityRecord = typeof amenities.$inferInsert;
 export type SpatiAmenityRecord = typeof spatiAmenities.$inferSelect;
+export type AdminRecord = typeof admins.$inferSelect;
+export type NewAdminRecord = typeof admins.$inferInsert;
