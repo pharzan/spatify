@@ -1,11 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { SpatiAdminPage } from "@/components/spatis/spati-admin-page";
 
-const Admin = dynamic(() => import("./AdminApp"), {
-  ssr: false, // Required to avoid react-router related errors
-});
+const Page = () => {
+  return <SpatiAdminPage />;
+};
 
-export default function Page() {
-  return <Admin />;
-}
+export default Page;
