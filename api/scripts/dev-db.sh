@@ -68,12 +68,27 @@ POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-${DB_URL_PASSWORD:-spatify}}
 POSTGRES_DB=${POSTGRES_DB:-${DB_URL_DATABASE:-spatify}}
 POSTGRES_PORT=${POSTGRES_PORT:-${DB_URL_PORT:-5432}}
 POSTGRES_IMAGE=${POSTGRES_IMAGE:-postgres:16}
+DOCKER_NETWORK=${DOCKER_NETWORK:-}
+DOCKER_NETWORK_ALIAS=${DOCKER_NETWORK_ALIAS:-$CONTAINER_NAME}
 
 require_docker() {
   if ! command -v docker >/dev/null 2>&1; then
     echo "Docker is required to run this script." >&2
     exit 1
   fi
+}
+
+ensure_network() {
+  if [[ -z "$DOCKER_NETWORK" ]]; then
+    return
+  fi
+
+  if docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1; then
+    return
+  fi
+
+  echo "Creating docker network '$DOCKER_NETWORK'..."
+  docker network create "$DOCKER_NETWORK" >/dev/null
 }
 
 connection_string() {
@@ -85,6 +100,8 @@ connection_string() {
 }
 
 start_db() {
+  ensure_network
+
   if docker ps --format '{{.Names}}' | grep -qw "$CONTAINER_NAME"; then
     echo "Container '$CONTAINER_NAME' is already running."
     return
@@ -95,12 +112,19 @@ start_db() {
     docker start "$CONTAINER_NAME" >/dev/null
   else
     echo "Creating and starting container '$CONTAINER_NAME'..."
+    local network_args=()
+    if [[ -n "$DOCKER_NETWORK" ]]; then
+      network_args+=(--network "$DOCKER_NETWORK")
+      network_args+=(--network-alias "$DOCKER_NETWORK_ALIAS")
+    fi
+
     docker run -d \
       --name "$CONTAINER_NAME" \
       -e POSTGRES_USER="$POSTGRES_USER" \
       -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
       -e POSTGRES_DB="$POSTGRES_DB" \
       -p "$POSTGRES_PORT:5432" \
+      "${network_args[@]}" \
       "$POSTGRES_IMAGE" >/dev/null
   fi
 

@@ -9,8 +9,7 @@ type AdminLoginInput = components["schemas"]["AdminLogin"];
 const requiredText = (label: string) =>
   z
     .string({
-      required_error: `${label} is required`,
-      invalid_type_error: `${label} is required`,
+      error: `${label} is required`,
     })
     .trim()
     .min(1, `${label} is required`);
@@ -20,8 +19,7 @@ const numericField = (
   options: { min?: number; max?: number } = {},
 ) => {
   let schema = z.coerce.number({
-    invalid_type_error: `${label} must be a number`,
-    required_error: `${label} is required`,
+    error: `${label} must be a number`,
   });
 
   if (options.min !== undefined) {
