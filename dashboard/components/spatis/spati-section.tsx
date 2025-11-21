@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,24 +34,14 @@ import {
   listAmenities,
   type Amenity,
 } from "@/lib/api/amenities";
+import {
+  adminSpatiLocationSchema,
+  type AdminSpatiLocationFormValues,
+} from "@/lib/validations/admin";
 
 import { queryKeys } from "./query-keys";
 
-type SpatiPayload = CreateSpatiPayload & UpdateSpatiPayload;
-
-type SpatiFormValues = {
-  name: string;
-  address: string;
-  description: string;
-  hours: string;
-  type: string;
-  rating: string;
-  latitude: string;
-  longitude: string;
-  amenityIds: string[];
-};
-
-const emptySpatiFormValues: SpatiFormValues = {
+const emptySpatiFormValues: AdminSpatiLocationFormValues = {
   name: "",
   address: "",
   description: "",
@@ -71,7 +63,9 @@ const normalizeSpati = (spati: Spati): NormalizedSpati => ({
     [],
 });
 
-const toFormValues = (spati: NormalizedSpati): SpatiFormValues => ({
+const toFormValues = (
+  spati: NormalizedSpati,
+): AdminSpatiLocationFormValues => ({
   name: spati.name ?? "",
   address: spati.address ?? "",
   description: spati.description ?? "",
@@ -83,17 +77,12 @@ const toFormValues = (spati: NormalizedSpati): SpatiFormValues => ({
   amenityIds: spati.amenityIds ?? [],
 });
 
-const buildSpatiPayload = (values: SpatiFormValues): SpatiPayload => ({
-  name: values.name,
-  address: values.address,
-  description: values.description,
-  hours: values.hours,
-  type: values.type,
-  rating: Number(values.rating) || 0,
-  latitude: Number(values.latitude) || 0,
-  longitude: Number(values.longitude) || 0,
-  amenityIds: values.amenityIds,
-});
+const getToastErrorMessage = (error: unknown) =>
+  error instanceof Error
+    ? error.message
+    : "Something went wrong. Please try again.";
+
+type DeleteSpatiVariables = { id: SpatiId; name?: string };
 
 export const SpatiSection = () => {
   const queryClient = useQueryClient();
@@ -109,7 +98,11 @@ export const SpatiSection = () => {
     },
   });
 
-  const form = useForm<SpatiFormValues>({ defaultValues: emptySpatiFormValues });
+  const form = useForm<AdminSpatiLocationFormValues>({
+    resolver: zodResolver(adminSpatiLocationSchema),
+    defaultValues: emptySpatiFormValues,
+  });
+  const { errors } = form.formState;
   const [editing, setEditing] = useState<NormalizedSpati | null>(null);
 
   useEffect(() => {
@@ -121,35 +114,60 @@ export const SpatiSection = () => {
   }, [editing, form]);
 
   const createMutation = useMutation({
-    mutationFn: (values: SpatiPayload) => createSpati(values),
-    onSuccess: () => {
+    mutationFn: (values: CreateSpatiPayload) => createSpati(values),
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.spatis });
       form.reset(emptySpatiFormValues);
+      toast.success("Späti created", {
+        description: `Added "${variables.name || "Späti"}" to the list.`,
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to create Späti", {
+        description: getToastErrorMessage(error),
+      });
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: SpatiId; data: SpatiPayload }) =>
+    mutationFn: ({ id, data }: { id: SpatiId; data: UpdateSpatiPayload }) =>
       updateSpati(id, data),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.spatis });
       setEditing(null);
       form.reset(emptySpatiFormValues);
+      const updatedName = variables.data.name || "Späti";
+      toast.success("Späti updated", {
+        description: `Saved changes for "${updatedName}".`,
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to update Späti", {
+        description: getToastErrorMessage(error),
+      });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: SpatiId) => deleteSpati(id),
-    onSuccess: () => {
+    mutationFn: ({ id }: DeleteSpatiVariables) => deleteSpati(id),
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.spatis });
       if (editing && editing.id) {
         setEditing(null);
       }
+      toast.success("Späti deleted", {
+        description: `Removed "${variables.name || "Späti"}".`,
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to delete Späti", {
+        description: getToastErrorMessage(error),
+      });
     },
   });
 
   const onSubmit = form.handleSubmit((values) => {
-    const payload = buildSpatiPayload(values);
+    const payload = adminSpatiLocationSchema.parse(values);
     if (editing) {
       updateMutation.mutate({ id: editing.id as SpatiId, data: payload });
     } else {
@@ -249,7 +267,10 @@ export const SpatiSection = () => {
                           className="text-destructive"
                           onClick={() => {
                             if (spati.id && window.confirm("Delete this Späti?")) {
-                              deleteMutation.mutate(spati.id as SpatiId);
+                              deleteMutation.mutate({
+                                id: spati.id as SpatiId,
+                                name: spati.name,
+                              });
                             }
                           }}
                           disabled={deleteMutation.isPending}
@@ -278,30 +299,55 @@ export const SpatiSection = () => {
               <div className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="spati-name">Name</Label>
-                  <Input id="spati-name" {...form.register("name", { required: true })} />
+                  <Input id="spati-name" {...form.register("name")} />
+                  {errors.name?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.name.message}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="spati-address">Address</Label>
                   <Input
                     id="spati-address"
-                    {...form.register("address", { required: true })}
+                    {...form.register("address")}
                   />
+                  {errors.address?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.address.message}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="spati-description">Description</Label>
                   <Textarea
                     id="spati-description"
                     rows={3}
-                    {...form.register("description", { required: true })}
+                    {...form.register("description")}
                   />
+                  {errors.description?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.description.message}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="spati-hours">Hours</Label>
                   <Input id="spati-hours" {...form.register("hours")} />
+                  {errors.hours?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.hours.message}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="spati-type">Type</Label>
                   <Input id="spati-type" {...form.register("type")} />
+                  {errors.type?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.type.message}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="spati-rating">Rating</Label>
@@ -313,6 +359,11 @@ export const SpatiSection = () => {
                     max="5"
                     {...form.register("rating")}
                   />
+                  {errors.rating?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.rating.message}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
@@ -323,6 +374,11 @@ export const SpatiSection = () => {
                       step="0.0001"
                       {...form.register("latitude")}
                     />
+                    {errors.latitude?.message ? (
+                      <p className="text-xs text-destructive">
+                        {errors.latitude.message}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="spati-longitude">Longitude</Label>
@@ -332,6 +388,11 @@ export const SpatiSection = () => {
                       step="0.0001"
                       {...form.register("longitude")}
                     />
+                    {errors.longitude?.message ? (
+                      <p className="text-xs text-destructive">
+                        {errors.longitude.message}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -369,6 +430,11 @@ export const SpatiSection = () => {
                       </div>
                     )}
                   />
+                  {errors.amenityIds?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.amenityIds.message}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               {mutationError ? (

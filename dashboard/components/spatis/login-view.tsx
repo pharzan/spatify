@@ -2,6 +2,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   Card,
@@ -15,15 +16,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, type AdminLoginPayload } from "@/lib/api/auth";
 import { setAuthToken } from "@/lib/auth/token-storage";
+import {
+  adminLoginSchema,
+  type AdminLoginFormValues,
+} from "@/lib/validations/admin";
 
 type LoginViewProps = {
   onAuthenticated: (token: string) => void;
 };
 
 export const LoginView = ({ onAuthenticated }: LoginViewProps) => {
-  const form = useForm<AdminLoginPayload>({
+  const form = useForm<AdminLoginFormValues>({
+    resolver: zodResolver(adminLoginSchema),
     defaultValues: { email: "", password: "" },
   });
+  const { errors } = form.formState;
   const loginMutation = useMutation({
     mutationFn: (values: AdminLoginPayload) => login(values),
     onSuccess: (data) => {
@@ -44,7 +51,10 @@ export const LoginView = ({ onAuthenticated }: LoginViewProps) => {
         <CardContent>
           <form
             className="space-y-4"
-            onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
+            onSubmit={form.handleSubmit((values) => {
+              const payload = adminLoginSchema.parse(values);
+              loginMutation.mutate(payload);
+            })}
           >
             <div className="space-y-2">
               <Label htmlFor="login-email">Email</Label>
@@ -52,8 +62,13 @@ export const LoginView = ({ onAuthenticated }: LoginViewProps) => {
                 id="login-email"
                 type="email"
                 autoComplete="email"
-                {...form.register("email", { required: true })}
+                {...form.register("email")}
               />
+              {errors.email?.message ? (
+                <p className="text-xs text-destructive">
+                  {errors.email.message}
+                </p>
+              ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="login-password">Password</Label>
@@ -61,8 +76,13 @@ export const LoginView = ({ onAuthenticated }: LoginViewProps) => {
                 id="login-password"
                 type="password"
                 autoComplete="current-password"
-                {...form.register("password", { required: true })}
+                {...form.register("password")}
               />
+              {errors.password?.message ? (
+                <p className="text-xs text-destructive">
+                  {errors.password.message}
+                </p>
+              ) : null}
             </div>
             {loginMutation.isError ? (
               <p className="text-sm text-destructive">
@@ -84,4 +104,3 @@ export const LoginView = ({ onAuthenticated }: LoginViewProps) => {
     </div>
   );
 };
-

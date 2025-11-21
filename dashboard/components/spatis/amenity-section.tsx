@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,14 +27,21 @@ import {
   type CreateAmenityPayload,
   type UpdateAmenityPayload,
 } from "@/lib/api/amenities";
+import {
+  adminAmenityInputSchema,
+  type AdminAmenityFormValues,
+} from "@/lib/validations/admin";
 
 import { queryKeys } from "./query-keys";
 
-type AmenityFormValues = CreateAmenityPayload & UpdateAmenityPayload;
-
-const emptyAmenityForm: AmenityFormValues = {
+const emptyAmenityForm: AdminAmenityFormValues = {
   name: "",
 };
+
+const getToastErrorMessage = (error: unknown) =>
+  error instanceof Error
+    ? error.message
+    : "Something went wrong. Please try again.";
 
 export const AmenitySection = () => {
   const queryClient = useQueryClient();
@@ -40,7 +49,11 @@ export const AmenitySection = () => {
     queryKey: queryKeys.amenities,
     queryFn: () => listAmenities(),
   });
-  const form = useForm<AmenityFormValues>({ defaultValues: emptyAmenityForm });
+  const form = useForm<AdminAmenityFormValues>({
+    resolver: zodResolver(adminAmenityInputSchema),
+    defaultValues: emptyAmenityForm,
+  });
+  const { errors } = form.formState;
   const [editing, setEditing] = useState<Amenity | null>(null);
 
   useEffect(() => {
@@ -53,37 +66,67 @@ export const AmenitySection = () => {
 
   const createMutation = useMutation({
     mutationFn: (payload: CreateAmenityPayload) => createAmenity(payload),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.amenities });
       form.reset(emptyAmenityForm);
+      toast.success("Amenity created", {
+        description: `Added "${variables.name || "amenity"}".`,
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to create amenity", {
+        description: getToastErrorMessage(error),
+      });
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: AmenityId; data: UpdateAmenityPayload }) =>
       updateAmenity(id, data),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.amenities });
       setEditing(null);
       form.reset(emptyAmenityForm);
+      toast.success("Amenity updated", {
+        description: `Saved changes for "${variables.data.name || "amenity"}".`,
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to update amenity", {
+        description: getToastErrorMessage(error),
+      });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: AmenityId) => deleteAmenity(id),
-    onSuccess: (_data, id) => {
+    mutationFn: ({
+      id,
+    }: {
+      id: AmenityId;
+      name?: string;
+    }) => deleteAmenity(id),
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.amenities });
-      if (editing && editing.id === id) {
+      if (editing && editing.id === variables.id) {
         setEditing(null);
       }
+      toast.success("Amenity deleted", {
+        description: `Removed "${variables.name || "amenity"}".`,
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to delete amenity", {
+        description: getToastErrorMessage(error),
+      });
     },
   });
 
   const onSubmit = form.handleSubmit((values) => {
+    const payload = adminAmenityInputSchema.parse(values);
     if (editing) {
-      updateMutation.mutate({ id: editing.id as AmenityId, data: values });
+      updateMutation.mutate({ id: editing.id as AmenityId, data: payload });
     } else {
-      createMutation.mutate(values);
+      createMutation.mutate(payload);
     }
   });
 
@@ -143,7 +186,10 @@ export const AmenitySection = () => {
                               amenity.id &&
                               window.confirm("Delete this amenity?")
                             ) {
-                              deleteMutation.mutate(amenity.id as AmenityId);
+                              deleteMutation.mutate({
+                                id: amenity.id as AmenityId,
+                                name: amenity.name,
+                              });
                             }
                           }}
                         >
@@ -172,8 +218,13 @@ export const AmenitySection = () => {
                 <Label htmlFor="amenity-name">Name</Label>
                 <Input
                   id="amenity-name"
-                  {...form.register("name", { required: true })}
+                  {...form.register("name")}
                 />
+                {errors.name?.message ? (
+                  <p className="text-xs text-destructive">
+                    {errors.name.message}
+                  </p>
+                ) : null}
               </div>
               {mutationError ? (
                 <p className="text-sm text-destructive">
@@ -215,4 +266,3 @@ export const AmenitySection = () => {
     </section>
   );
 };
-
