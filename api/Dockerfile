@@ -14,6 +14,15 @@ COPY src ./src
 COPY --from=deps /app/node_modules ./node_modules
 RUN npm run build
 
+FROM node:20-slim AS migrate
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package*.json tsconfig.json drizzle.config.ts ./
+COPY src ./src
+COPY scripts ./scripts
+COPY --from=deps /app/node_modules ./node_modules
+CMD ["npm", "run", "db:migrate"]
+
 FROM node:20-slim AS production
 WORKDIR /app
 ENV NODE_ENV=production
