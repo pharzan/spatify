@@ -99,3 +99,14 @@ npm run web      # run web preview
 -----
 
 Happy mapping! Feel free to extend the hooks/components pattern with new overlays or filters as the product grows.
+
+### Build
+
+first create a keystore file.
+
+1. npx expo prebuild
+2. npx expo run:android
+3. npm run setup:android-signing -- --store-file my-release-key.keystore --store-password 123456 --key-alias spatifyRelease --key-password 123456
+4. cd android && NODE_ENV=production ./gradlew assembleRelease
+ 
+

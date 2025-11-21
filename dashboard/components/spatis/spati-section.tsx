@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { ExternalLinkIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -108,6 +109,7 @@ export const SpatiSection = () => {
   });
   const { errors } = form.formState;
   const [editing, setEditing] = useState<NormalizedSpati | null>(null);
+  const [isAutofillingCoords, setIsAutofillingCoords] = useState(false);
 
   useEffect(() => {
     if (editing) {
@@ -178,6 +180,76 @@ export const SpatiSection = () => {
       createMutation.mutate(payload);
     }
   });
+
+  const handleAutofillCoordinates = async () => {
+    const address = form.getValues("address")?.trim();
+    if (!address) {
+      toast.error("Address required", {
+        description: "Enter an address before attempting to autofill.",
+      });
+      return;
+    }
+
+    setIsAutofillingCoords(true);
+    try {
+      const params = new URLSearchParams({
+        q: address,
+        format: "json",
+        limit: "1",
+      });
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?${params.toString()}`,
+      );
+      if (!response.ok) {
+        throw new Error("Lookup failed, please try again.");
+      }
+      const [match] = (await response.json()) as
+        | { lat: string; lon: string }[]
+        | [];
+      if (!match) {
+        toast.error("No coordinates found", {
+          description: "Nominatim could not find a match for that address.",
+        });
+        return;
+      }
+      form.setValue("latitude", match.lat);
+      form.setValue("longitude", match.lon);
+      toast.success("Coordinates updated", {
+        description: "Latitude and longitude were filled from the address.",
+      });
+    } catch (error) {
+      toast.error("Failed to autofill", {
+        description: getToastErrorMessage(error),
+      });
+    } finally {
+      setIsAutofillingCoords(false);
+    }
+  };
+
+  const handleOpenCoordinatesInMaps = () => {
+    const parseCoordinate = (value: unknown) => {
+      if (typeof value === "number") {
+        return value;
+      }
+      if (typeof value !== "string") {
+        return NaN;
+      }
+      return Number(value.replace(",", ".").trim());
+    };
+
+    const latitude = parseCoordinate(form.getValues("latitude"));
+    const longitude = parseCoordinate(form.getValues("longitude"));
+
+    if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+      toast.error("Invalid coordinates", {
+        description: "Enter valid latitude and longitude before opening maps.",
+      });
+      return;
+    }
+
+    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   const mutationError =
     createMutation.error || updateMutation.error || deleteMutation.error;
@@ -316,6 +388,18 @@ export const SpatiSection = () => {
                 <div className="grid gap-2">
                   <Label htmlFor="spati-address">Address</Label>
                   <Input id="spati-address" {...form.register("address")} />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    className="w-fit"
+                    onClick={handleAutofillCoordinates}
+                    disabled={isAutofillingCoords}
+                  >
+                    {isAutofillingCoords
+                      ? "Looking up coordinates…"
+                      : "Autofill coordinates"}
+                  </Button>
                   {errors.address?.message ? (
                     <p className="text-xs text-destructive">
                       {errors.address.message}
@@ -375,7 +459,7 @@ export const SpatiSection = () => {
                     <Input
                       id="spati-latitude"
                       type="number"
-                      step="0.0001"
+                      step="0.0000001"
                       {...form.register("latitude")}
                     />
                     {errors.latitude?.message ? (
@@ -389,7 +473,7 @@ export const SpatiSection = () => {
                     <Input
                       id="spati-longitude"
                       type="number"
-                      step="0.0001"
+                      step="0.0000001"
                       {...form.register("longitude")}
                     />
                     {errors.longitude?.message ? (
@@ -399,6 +483,17 @@ export const SpatiSection = () => {
                     ) : null}
                   </div>
                 </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="link"
+                  className="w-fit px-0 text-sm cursor-pointer"
+                  onClick={handleOpenCoordinatesInMaps}
+                  title="Opens coordinates in a new Google Maps tab"
+                >
+                  Open in Google Maps (new tab)
+                  <ExternalLinkIcon aria-hidden="true" className="size-3.5" />
+                </Button>
                 <div className="space-y-2">
                   <Label>Amenities</Label>
                   <Controller
