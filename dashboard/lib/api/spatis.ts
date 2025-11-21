@@ -1,11 +1,16 @@
 import type { paths } from "@/generated/api-types";
 import { apiFetch } from "./client";
 
-type SpatiListResponse = paths["/spatis"]["get"]["responses"]["200"]["content"]["application/json"];
-type CreateSpatiPayload = paths["/admin/spatis"]["post"]["requestBody"]["content"]["application/json"];
-type UpdateSpatiPayload = paths["/admin/spatis/{id}"]["put"]["requestBody"]["content"]["application/json"];
-type CreateSpatiResult = paths["/admin/spatis"]["post"]["responses"]["201"]["content"]["application/json"];
-type UpdateSpatiResult = paths["/admin/spatis/{id}"]["put"]["responses"]["200"]["content"]["application/json"];
+type SpatiListResponse =
+  paths["/spatis"]["get"]["responses"]["200"]["content"]["application/json"];
+type CreateSpatiPayload =
+  paths["/admin/spatis"]["post"]["requestBody"]["content"]["application/json"];
+type UpdateSpatiPayload =
+  paths["/admin/spatis/{id}"]["put"]["requestBody"]["content"]["application/json"];
+type CreateSpatiResult =
+  paths["/admin/spatis"]["post"]["responses"]["201"]["content"]["application/json"];
+type UpdateSpatiResult =
+  paths["/admin/spatis/{id}"]["put"]["responses"]["200"]["content"]["application/json"];
 type SpatiId = paths["/admin/spatis/{id}"]["put"]["parameters"]["path"]["id"];
 
 export type Spati = SpatiListResponse[number];

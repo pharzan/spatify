@@ -24,4 +24,3 @@ export const AdminContent = () => {
 
   return <Dashboard onLogout={handleLogout} />;
 };
-

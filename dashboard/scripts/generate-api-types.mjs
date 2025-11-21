@@ -11,13 +11,17 @@ function run(command, args) {
 
     child.on("close", (code) => {
       if (code === 0) resolvePromise(undefined);
-      else rejectPromise(new Error(`${command} ${args.join(" ")} exited with code ${code}`));
+      else
+        rejectPromise(
+          new Error(`${command} ${args.join(" ")} exited with code ${code}`),
+        );
     });
   });
 }
 
 async function main() {
-  const specUrl = process.env.OPENAPI_SPEC_URL ?? "http://localhost:3333/docs/json";
+  const specUrl =
+    process.env.OPENAPI_SPEC_URL ?? "http://localhost:3333/docs/json";
   const outputPath = resolve(process.cwd(), "generated/api-types.ts");
 
   await mkdir(dirname(outputPath), { recursive: true });

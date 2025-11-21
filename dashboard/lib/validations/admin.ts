@@ -2,8 +2,7 @@ import { z } from "zod";
 
 import type { components } from "@/generated/api-types";
 
-type AdminSpatiLocationInput =
-  components["schemas"]["AdminSpatiLocationInput"];
+type AdminSpatiLocationInput = components["schemas"]["AdminSpatiLocationInput"];
 type AdminAmenityInput = components["schemas"]["AdminAmenityInput"];
 type AdminLoginInput = components["schemas"]["AdminLogin"];
 
@@ -38,32 +37,26 @@ const numericField = (
   return schema;
 };
 
-export const adminSpatiLocationSchema = z
-  .object({
-    name: requiredText("Name"),
-    description: requiredText("Description"),
-    latitude: numericField("Latitude"),
-    longitude: numericField("Longitude"),
-    address: requiredText("Address"),
-    hours: requiredText("Hours"),
-    type: requiredText("Type"),
-    rating: numericField("Rating", { min: 0, max: 5 }),
-    amenityIds: z.array(requiredText("Amenity")).default([]),
-  })
-  satisfies z.ZodType<AdminSpatiLocationInput>;
+export const adminSpatiLocationSchema = z.object({
+  name: requiredText("Name"),
+  description: requiredText("Description"),
+  latitude: numericField("Latitude"),
+  longitude: numericField("Longitude"),
+  address: requiredText("Address"),
+  hours: requiredText("Hours"),
+  type: requiredText("Type"),
+  rating: numericField("Rating", { min: 0, max: 5 }),
+  amenityIds: z.array(requiredText("Amenity")).default([]),
+}) satisfies z.ZodType<AdminSpatiLocationInput>;
 
-export const adminAmenityInputSchema = z
-  .object({
-    name: requiredText("Name"),
-  })
-  satisfies z.ZodType<AdminAmenityInput>;
+export const adminAmenityInputSchema = z.object({
+  name: requiredText("Name"),
+}) satisfies z.ZodType<AdminAmenityInput>;
 
-export const adminLoginSchema = z
-  .object({
-    email: requiredText("Email").email("Enter a valid email"),
-    password: requiredText("Password"),
-  })
-  satisfies z.ZodType<AdminLoginInput>;
+export const adminLoginSchema = z.object({
+  email: requiredText("Email").email("Enter a valid email"),
+  password: requiredText("Password"),
+}) satisfies z.ZodType<AdminLoginInput>;
 
 export type AdminSpatiLocationFormValues = z.input<
   typeof adminSpatiLocationSchema

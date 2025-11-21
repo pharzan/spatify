@@ -11,7 +11,8 @@ type UpdateAmenityPayload =
   paths["/admin/amenities/{id}"]["put"]["requestBody"]["content"]["application/json"];
 type UpdateAmenityResult =
   paths["/admin/amenities/{id}"]["put"]["responses"]["200"]["content"]["application/json"];
-type AmenityId = paths["/admin/amenities/{id}"]["delete"]["parameters"]["path"]["id"];
+type AmenityId =
+  paths["/admin/amenities/{id}"]["delete"]["parameters"]["path"]["id"];
 
 export type Amenity = AmenityListResponse[number];
 
@@ -24,7 +25,8 @@ export type {
   UpdateAmenityResult,
 };
 
-export const listAmenities = () => apiFetch<AmenityListResponse>("/admin/amenities");
+export const listAmenities = () =>
+  apiFetch<AmenityListResponse>("/admin/amenities");
 
 export const createAmenity = (payload: CreateAmenityPayload) =>
   apiFetch<CreateAmenityResult>("/admin/amenities", {

@@ -16,7 +16,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   createAmenity,
   deleteAmenity,
@@ -99,12 +106,7 @@ export const AmenitySection = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: ({
-      id,
-    }: {
-      id: AmenityId;
-      name?: string;
-    }) => deleteAmenity(id),
+    mutationFn: ({ id }: { id: AmenityId; name?: string }) => deleteAmenity(id),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.amenities });
       if (editing && editing.id === variables.id) {
@@ -207,19 +209,14 @@ export const AmenitySection = () => {
           <CardHeader>
             <CardTitle>{editing ? "Edit amenity" : "New amenity"}</CardTitle>
             <CardDescription>
-              {editing
-                ? "Update the selected amenity"
-                : "Create a new amenity"}
+              {editing ? "Update the selected amenity" : "Create a new amenity"}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={onSubmit}>
               <div className="grid gap-2">
                 <Label htmlFor="amenity-name">Name</Label>
-                <Input
-                  id="amenity-name"
-                  {...form.register("name")}
-                />
+                <Input id="amenity-name" {...form.register("name")} />
                 {errors.name?.message ? (
                   <p className="text-xs text-destructive">
                     {errors.name.message}

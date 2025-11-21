@@ -28,9 +28,8 @@ type DashboardProps = {
 };
 
 export const Dashboard = ({ onLogout }: DashboardProps) => {
-  const [activeSection, setActiveSection] = useState<
-    (typeof navItems)[number]["id"]
-  >("spatis");
+  const [activeSection, setActiveSection] =
+    useState<(typeof navItems)[number]["id"]>("spatis");
   const currentNav = navItems.find((item) => item.id === activeSection)!;
 
   return (
@@ -118,4 +117,3 @@ export const Dashboard = ({ onLogout }: DashboardProps) => {
     </div>
   );
 };
-

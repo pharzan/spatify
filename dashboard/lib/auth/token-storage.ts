@@ -3,7 +3,8 @@
 const TOKEN_STORAGE_KEY = "spatify.admin.token";
 let currentToken: string | null = null;
 
-const hasWindowStorage = () => typeof window !== "undefined" && !!window.localStorage;
+const hasWindowStorage = () =>
+  typeof window !== "undefined" && !!window.localStorage;
 
 export const getStoredAuthToken = () => {
   if (currentToken) return currentToken;

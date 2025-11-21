@@ -18,7 +18,14 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createSpati,
@@ -30,10 +37,7 @@ import {
   type SpatiId,
   type UpdateSpatiPayload,
 } from "@/lib/api/spatis";
-import {
-  listAmenities,
-  type Amenity,
-} from "@/lib/api/amenities";
+import { listAmenities, type Amenity } from "@/lib/api/amenities";
 import {
   adminSpatiLocationSchema,
   type AdminSpatiLocationFormValues,
@@ -266,7 +270,10 @@ export const SpatiSection = () => {
                           size="sm"
                           className="text-destructive"
                           onClick={() => {
-                            if (spati.id && window.confirm("Delete this Späti?")) {
+                            if (
+                              spati.id &&
+                              window.confirm("Delete this Späti?")
+                            ) {
                               deleteMutation.mutate({
                                 id: spati.id as SpatiId,
                                 name: spati.name,
@@ -308,10 +315,7 @@ export const SpatiSection = () => {
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="spati-address">Address</Label>
-                  <Input
-                    id="spati-address"
-                    {...form.register("address")}
-                  />
+                  <Input id="spati-address" {...form.register("address")} />
                   {errors.address?.message ? (
                     <p className="text-xs text-destructive">
                       {errors.address.message}
@@ -414,7 +418,9 @@ export const SpatiSection = () => {
                                 onCheckedChange={(value) => {
                                   const next = value
                                     ? [...(field.value ?? []), amenity.id]
-                                    : (field.value ?? []).filter((id) => id !== amenity.id);
+                                    : (field.value ?? []).filter(
+                                        (id) => id !== amenity.id,
+                                      );
                                   field.onChange(next);
                                 }}
                               />
