@@ -1,63 +1,57 @@
-fqBuHere is a comprehensive `README.md` based on the provided source code.
-
------
-
 # Spätify Admin Dashboard
-
-[cite\_start]A modern, responsive administrative dashboard built with **Next.js 16** and **React 19** for managing "Späti" locations and amenities[cite: 1, 100, 561]. This application serves as the frontend interface for administrators to curate content for the Spatify platform.
+ A modern, responsive administrative dashboard built with **Next.js 16** and **React 19** for managing "Späti" locations and amenities. This application serves as the frontend interface for administrators to curate content for the Spatify platform.
 
 ## 🏗 Architecture
 
-This project utilizes a **Client-Side Rendering (CSR)** strategy within the Next.js App Router structure. [cite\_start]It relies heavily on **TanStack Query** for server-state management, ensuring the UI stays in sync with the backend asynchronously[cite: 42, 150].
+This project utilizes a **Client-Side Rendering (CSR)** strategy within the Next.js App Router structure. It relies heavily on **TanStack Query** for server-state management, ensuring the UI stays in sync with the backend asynchronously.
 
 ### Key Architectural Decisions:
 
-  * [cite\_start]**Type Safety:** The project uses `openapi-typescript` to generate TypeScript definitions directly from the backend OpenAPI specification, ensuring strict type safety between the API and the frontend[cite: 453, 1279].
-  * [cite\_start]**Component Library:** The UI is built using a "headless" approach with **Radix UI** primitives for accessibility and logic, styled via **Tailwind CSS v4** and **shadcn/ui** patterns[cite: 14, 236, 559].
-  * **Authentication:** Implements a Bearer token authentication flow. [cite\_start]Tokens are stored in `localStorage` and automatically injected into API requests via a custom fetch wrapper[cite: 525, 541].
-  * [cite\_start]**Form Management:** Forms are handled using **React Hook Form** paired with **Zod** schemas for validation[cite: 547, 119].
+  * **Type Safety:** The project uses `openapi-typescript` to generate TypeScript definitions directly from the backend OpenAPI specification, ensuring strict type safety between the API and the frontend.
+  * **Component Library:** The UI is built using a "headless" approach with **Radix UI** primitives for accessibility and logic, styled via **Tailwind CSS v4** and **shadcn/ui** patterns.
+  * **Authentication:** Implements a Bearer token authentication flow. Tokens are stored in `localStorage` and automatically injected into API requests via a custom fetch wrapper.
+  * **Form Management:** Forms are handled using **React Hook Form** paired with **Zod** schemas for validation.
 
 -----
 
 ## 📂 Project Structure
-
-[cite\_start]The project follows a modular directory structure within the `dashboard` root[cite: 1]:
+ The project follows a modular directory structure within the `dashboard` root:
 
 ```txt
 dashboard/
 ├── app/                 # Next.js App Router pages and layouts
-[cite_start]│   ├── layout.tsx       # Root layout with fonts and Toaster [cite: 37]
-[cite_start]│   └── page.tsx         # Entry point, renders SpatiAdminPage [cite: 39]
+│   ├── layout.tsx       # Root layout with fonts and Toaster 
+│   └── page.tsx         # Entry point, renders SpatiAdminPage 
 ├── components/          # React components
-[cite_start]│   ├── spatis/          # Domain-specific components (Dashboard, Login, Sections) [cite: 41]
-[cite_start]│   └── ui/              # Reusable UI components (Buttons, Inputs, Dialogs) [cite: 47]
+│   ├── spatis/          # Domain-specific components (Dashboard, Login, Sections) 
+│   └── ui/              # Reusable UI components (Buttons, Inputs, Dialogs) 
 ├── generated/           # Auto-generated API TypeScript definitions
-[cite_start]│   └── api-types.ts     # OpenAPI interfaces [cite: 453]
+│   └── api-types.ts     # OpenAPI interfaces 
 ├── lib/                 # Utilities and Logic
-[cite_start]│   ├── api/             # API client and endpoint definitions [cite: 516, 536]
-[cite_start]│   ├── auth/            # Token storage and management [cite: 539]
-[cite_start]│   ├── validations/     # Zod schemas for form validation [cite: 547]
-[cite_start]│   └── utils.ts         # Classname merging utility [cite: 546]
-[cite_start]├── public/              # Static assets (SVGs) [cite: 1271]
+│   ├── api/             # API client and endpoint definitions 
+│   ├── auth/            # Token storage and management 
+│   ├── validations/     # Zod schemas for form validation 
+│   └── utils.ts         # Classname merging utility 
+├── public/              # Static assets (SVGs) 
 ├── scripts/             # Build/Maintenance scripts
-[cite_start]│   └── generate-api-types.mjs # Script to sync types with backend [cite: 1275]
-[cite_start]└── Dockerfile           # Multi-stage Docker build configuration [cite: 5]
+│   └── generate-api-types.mjs # Script to sync types with backend 
+└── Dockerfile           # Multi-stage Docker build configuration 
 ```
 
 -----
 
 ## 🚀 Features
 
-  * [cite\_start]**Admin Authentication:** Secure login interface interacting with `/admin/auth/login`[cite: 494].
+  * **Admin Authentication:** Secure login interface interacting with `/admin/auth/login`.
   * **Location Management:**
-      * [cite\_start]View a paginated/filterable list of Spätis[cite: 162].
-      * [cite\_start]Create, Update, and Delete locations [cite: 154-157].
-      * [cite\_start]Manage details including geolocation, opening hours, and ratings [cite: 201-208].
+      * View a paginated/filterable list of Spätis.
+      * Create, Update, and Delete locations .
+      * Manage details including geolocation, opening hours, and ratings .
   * **Amenity Management:**
-      * [cite\_start]Maintain a catalog of amenities (e.g., WiFi, Seating)[cite: 66].
-      * [cite\_start]Associate amenities with specific Späti locations[cite: 212].
-  * [cite\_start]**Responsive UI:** Sidebar navigation that adapts to mobile and desktop viewports[cite: 98].
-  * [cite\_start]**Dark Mode:** Built-in support via CSS variables and Tailwind[cite: 25].
+      * Maintain a catalog of amenities (e.g., WiFi, Seating).
+      * Associate amenities with specific Späti locations.
+  * **Responsive UI:** Sidebar navigation that adapts to mobile and desktop viewports.
+  * **Dark Mode:** Built-in support via CSS variables and Tailwind.
 
 -----
 
@@ -65,15 +59,15 @@ dashboard/
 
 | Category | Technology | Description |
 | :--- | :--- | :--- |
-| **Framework** | Next.js 16 | [cite\_start]App Router architecture [cite: 561] |
-| **Library** | React 19 | [cite\_start]UI Component library [cite: 561] |
-| **Language** | TypeScript 5 | [cite\_start]Static typing [cite: 562] |
-| **Styling** | Tailwind CSS 4 | [cite\_start]Utility-first CSS [cite: 562] |
-| **State** | TanStack Query v5 | [cite\_start]Async state management [cite: 560] |
-| **Forms** | React Hook Form | [cite\_start]Form state management [cite: 561] |
-| **Validation** | Zod | [cite\_start]Schema validation [cite: 1264] |
-| **Icons** | Lucide React | [cite\_start]Iconography [cite: 560] |
-| **Build** | Docker | [cite\_start]Containerization [cite: 5] |
+| **Framework** | Next.js 16 | App Router architecture  |
+| **Library** | React 19 | UI Component library  |
+| **Language** | TypeScript 5 | Static typing  |
+| **Styling** | Tailwind CSS 4 | Utility-first CSS  |
+| **State** | TanStack Query v5 | Async state management  |
+| **Forms** | React Hook Form | Form state management  |
+| **Validation** | Zod | Schema validation  |
+| **Icons** | Lucide React | Iconography  |
+| **Build** | Docker | Containerization  |
 
 -----
 
@@ -122,14 +116,12 @@ npm run generate:api-types
 ```bash
 npm run dev
 ```
-
-[cite\_start]Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result[cite: 7].
+ Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result.
 
 -----
 
 ## 🐳 Docker Support
-
-[cite\_start]The project includes a multi-stage `Dockerfile` optimized for production[cite: 5].
+ The project includes a multi-stage `Dockerfile` optimized for production.
 
 **Build the image:**
 
@@ -142,8 +134,7 @@ docker build -t spati-dashboard .
 ```bash
 docker run -p 3000:3000 spati-dashboard
 ```
-
-[cite\_start]The Dockerfile uses `node:20-alpine` and respects `NEXT_TELEMETRY_DISABLED=1` for privacy[cite: 5].
+ The Dockerfile uses `node:20-alpine` and respects `NEXT_TELEMETRY_DISABLED=1` for privacy.
 
 -----
 
@@ -153,17 +144,16 @@ docker run -p 3000:3000 spati-dashboard
 
 A wrapper around the native `fetch` API. It automatically handles:
 
-  * [cite\_start]**Authorization:** Injects the `Bearer` token from local storage if present[cite: 525].
-  * [cite\_start]**Headers:** Sets `Content-Type` and `Accept` headers[cite: 524].
-  * [cite\_start]**Error Handling:** Throws errors for non-OK responses[cite: 527].
+  * **Authorization:** Injects the `Bearer` token from local storage if present.
+  * **Headers:** Sets `Content-Type` and `Accept` headers.
+  * **Error Handling:** Throws errors for non-OK responses.
 
 ### Admin Content (`components/spatis/admin-content.tsx`)
-
-[cite\_start]The main layout controller that switches between the `LoginView` and the `Dashboard` based on the presence of an authentication token[cite: 44].
+ The main layout controller that switches between the `LoginView` and the `Dashboard` based on the presence of an authentication token.
 
 ### Validation Schemas (`lib/validations/admin.ts`)
 
-Defines the shape and constraints of data using Zod. [cite\_start]For example, the `adminSpatiLocationSchema` ensures coordinates are numbers and names are non-empty strings[cite: 552].
+Defines the shape and constraints of data using Zod. For example, the `adminSpatiLocationSchema` ensures coordinates are numbers and names are non-empty strings.
 
 -----
 
