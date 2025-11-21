@@ -18,7 +18,7 @@ function run(command, args) {
 
 async function main() {
   const specUrl = process.env.OPENAPI_SPEC_URL ?? "http://localhost:3333/docs/json";
-  const outputPath = resolve(process.cwd(), "src/generated/api-types.ts");
+  const outputPath = resolve(process.cwd(), "generated/api-types.ts");
 
   await mkdir(dirname(outputPath), { recursive: true });
 

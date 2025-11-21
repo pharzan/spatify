@@ -1,4 +1,4 @@
-import type { paths } from "@/src/generated/api-types";
+import type { paths } from "@/generated/api-types";
 import { apiFetch } from "./client";
 
 type AmenityListResponse =
