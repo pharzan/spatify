@@ -32,7 +32,5 @@ RUN npm prune --omit=dev
 COPY --from=build /app/dist ./dist
 COPY drizzle.config.ts ./
 COPY --from=build /app/src/db ./src/db
-RUN mkdir -p keys
-COPY /spatify-sa-key.json ./keys/bucket-sa.json
 EXPOSE 3333
 CMD ["node", "dist/server.js"]
