@@ -173,7 +173,15 @@ export const SpatiSection = () => {
   });
 
   const onSubmit = form.handleSubmit((values) => {
-    const payload = adminSpatiLocationSchema.parse(values);
+    const imageFile =
+      values.image instanceof FileList ? values.image[0] : values.image;
+
+    const payload = {
+      ...adminSpatiLocationSchema.parse(values),
+      image: imageFile,
+      removeImage: values.removeImage,
+    };
+
     if (editing) {
       updateMutation.mutate({ id: editing.id as SpatiId, data: payload });
     } else {
@@ -283,6 +291,7 @@ export const SpatiSection = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
+                    <TableHead>Image</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Rating</TableHead>
                     <TableHead>Amenities</TableHead>
@@ -297,6 +306,17 @@ export const SpatiSection = () => {
                         <div className="text-xs text-muted-foreground">
                           {spati.address}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        {spati.imageUrl ? (
+                          <img
+                            src={spati.imageUrl}
+                            alt={spati.name}
+                            className="h-10 w-10 rounded object-cover"
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded bg-muted" />
+                        )}
                       </TableCell>
                       <TableCell>
                         {spati.type ? (
@@ -385,6 +405,51 @@ export const SpatiSection = () => {
                     </p>
                   ) : null}
                 </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="spati-image">Image</Label>
+                  <Input
+                    id="spati-image"
+                    type="file"
+                    accept="image/*"
+                    {...form.register("image")}
+                  />
+                  {editing?.imageUrl && !form.watch("removeImage") && (
+                    <div className="flex items-center gap-4 rounded-md border p-2">
+                      <img
+                        src={editing.imageUrl}
+                        alt="Current image"
+                        className="h-10 w-10 rounded object-cover"
+                      />
+                      <div className="flex-1 text-sm text-muted-foreground">
+                        Current image
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => form.setValue("removeImage", true)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )}
+                  {form.watch("removeImage") && (
+                    <div className="text-sm text-muted-foreground">
+                      Image will be removed on save.{" "}
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="h-auto p-0"
+                        onClick={() => form.setValue("removeImage", false)}
+                      >
+                        Undo
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="spati-address">Address</Label>
                   <Input id="spati-address" {...form.register("address")} />

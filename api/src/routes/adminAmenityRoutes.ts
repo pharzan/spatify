@@ -182,7 +182,7 @@ export const registerAdminAmenityRoutes = (
   service: AmenityAdminService,
 ): void => {
   const app = fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>();
-  const amenitySchemaRef = registerSchema(AmenitySchema, 'AdminAmenity');
+  const amenitySchemaRef = registerSchema(AmenitySchema, 'Amenity');
   const amenityIdParamSchemaRef = registerSchema(amenityIdParamSchema, 'AdminAmenityIdParams');
   const amenityListSchemaRef = registerSchema(amenityListSchema, 'AdminAmenitiesResponse');
 

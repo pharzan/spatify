@@ -1,8 +1,10 @@
 import { z } from "zod";
 
-import type { components } from "@/generated/api-types";
+import type { paths, components } from "@/generated/api-types";
 
-type AdminSpatiLocationInput = components["schemas"]["AdminSpatiLocationInput"];
+type AdminSpatiLocationInput = NonNullable<
+  paths["/admin/spatis"]["post"]["requestBody"]
+>["content"]["multipart/form-data"];
 type AdminLoginInput = components["schemas"]["AdminLogin"];
 
 const requiredText = (label: string) =>
@@ -44,6 +46,8 @@ export const adminSpatiLocationSchema = z.object({
   type: requiredText("Type"),
   rating: numericField("Rating", { min: 0, max: 5 }),
   amenityIds: z.array(requiredText("Amenity")).default([]),
+  image: z.any().optional(), // FileList or File
+  removeImage: z.boolean().optional(),
 }) satisfies z.ZodType<AdminSpatiLocationInput>;
 
 // Schema for the form values (what the user interacts with)

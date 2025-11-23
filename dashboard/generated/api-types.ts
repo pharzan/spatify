@@ -57,9 +57,51 @@ export interface paths {
         path?: never;
         cookie?: never;
       };
-      requestBody: {
+      requestBody?: {
         content: {
-          "application/json": components["schemas"]["AdminSpatiLocationInput"];
+          "multipart/form-data": {
+            name: string;
+            description: string;
+            latitude: number;
+            longitude: number;
+            address: string;
+            hours: string;
+            type: string;
+            rating: number;
+            amenityIds?: string[];
+            /**
+             * Format: binary
+             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+             */
+            image?: string;
+            /**
+             * Format: uri
+             * @description Optional direct URL to reuse instead of uploading a file.
+             */
+            imageUrl?: string | null;
+            /** @description Set to true to delete the currently stored image. */
+            removeImage?: boolean;
+          };
+          "application/json": {
+            name: string;
+            description: string;
+            latitude: number;
+            longitude: number;
+            address: string;
+            hours: string;
+            type: string;
+            rating: number;
+            /**
+             * Format: uri
+             * @description Public URL for the Späti image
+             */
+            imageUrl?: string | null;
+            /**
+             * @description Amenities assigned to this Späti
+             * @default []
+             */
+            amenityIds?: string[];
+          };
         };
       };
       responses: {
@@ -99,9 +141,32 @@ export interface paths {
         };
         cookie?: never;
       };
-      requestBody: {
+      requestBody?: {
         content: {
-          "application/json": components["schemas"]["AdminSpatiLocationInput"];
+          "multipart/form-data": {
+            name: string;
+            description: string;
+            latitude: number;
+            longitude: number;
+            address: string;
+            hours: string;
+            type: string;
+            rating: number;
+            amenityIds?: string[];
+            /**
+             * Format: binary
+             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+             */
+            image?: string;
+            /**
+             * Format: uri
+             * @description Optional direct URL to reuse instead of uploading a file.
+             */
+            imageUrl?: string | null;
+            /** @description Set to true to delete the currently stored image. */
+            removeImage?: boolean;
+          };
+          "application/json": unknown;
         };
       };
       responses: {
@@ -364,21 +429,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    AdminSpatiLocationInput: {
-      name: string;
-      description: string;
-      latitude: number;
-      longitude: number;
-      address: string;
-      hours: string;
-      type: string;
-      rating: number;
-      /**
-       * @description Amenities assigned to this Späti
-       * @default []
-       */
-      amenityIds: string[];
-    };
     AdminLogin: {
       /** Format: email */
       email: string;
@@ -394,6 +444,11 @@ export interface components {
       hours: string;
       type: string;
       rating: number;
+      /**
+       * Format: uri
+       * @description Public URL for the Späti image
+       */
+      imageUrl: string | null;
       /** @description Unique identifier of the Späti */
       id: string;
       /** @description Amenities available at the Späti */
