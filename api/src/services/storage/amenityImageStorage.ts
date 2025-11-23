@@ -36,6 +36,8 @@ export class GcsAmenityImageStorage implements AmenityImageStorage {
 
     await pipeline(image.stream, writeStream);
 
+    await file.makePublic();
+
     return file.publicUrl();
   }
 

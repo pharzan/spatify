@@ -183,9 +183,33 @@ export interface paths {
         path?: never;
         cookie?: never;
       };
-      requestBody: {
+      requestBody?: {
         content: {
-          "application/json": components["schemas"]["AdminAmenityInput"];
+          "multipart/form-data": {
+            /** @description Human readable amenity name */
+            name: string;
+            /**
+             * Format: binary
+             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+             */
+            image?: string;
+            /**
+             * Format: uri
+             * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
+             */
+            imageUrl?: string | null;
+            /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
+            removeImage?: boolean;
+          };
+          "application/json": {
+            /** @description Human readable amenity name */
+            name: string;
+            /**
+             * Format: uri
+             * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
+             */
+            imageUrl?: string | null;
+          };
         };
       };
       responses: {
@@ -225,9 +249,33 @@ export interface paths {
         };
         cookie?: never;
       };
-      requestBody: {
+      requestBody?: {
         content: {
-          "application/json": components["schemas"]["AdminAmenityInput"];
+          "multipart/form-data": {
+            /** @description Human readable amenity name */
+            name: string;
+            /**
+             * Format: binary
+             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+             */
+            image?: string;
+            /**
+             * Format: uri
+             * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
+             */
+            imageUrl?: string | null;
+            /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
+            removeImage?: boolean;
+          };
+          "application/json": {
+            /** @description Human readable amenity name */
+            name: string;
+            /**
+             * Format: uri
+             * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
+             */
+            imageUrl?: string | null;
+          };
         };
       };
       responses: {
@@ -331,10 +379,6 @@ export interface components {
        */
       amenityIds: string[];
     };
-    AdminAmenityInput: {
-      /** @description Human readable amenity name */
-      name: string;
-    };
     AdminLogin: {
       /** Format: email */
       email: string;
@@ -360,6 +404,11 @@ export interface components {
       id: string;
       /** @description Human readable amenity name */
       name: string;
+      /**
+       * Format: uri
+       * @description Public URL for the amenity image
+       */
+      imageUrl: string | null;
     };
     AdminSpatiLocation: components["schemas"]["PublicSpatiLocation"];
     AdminAmenitiesResponse: components["schemas"]["AdminAmenity"][];
