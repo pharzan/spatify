@@ -124,11 +124,19 @@ export const AmenitySection = () => {
   });
 
   const onSubmit = form.handleSubmit((values) => {
-    const payload = adminAmenityInputSchema.parse(values);
+    const imageFile =
+      values.image instanceof FileList ? values.image[0] : values.image;
+
+    const payload: CreateAmenityPayload | UpdateAmenityPayload = {
+      name: values.name,
+      image: imageFile,
+      removeImage: values.removeImage,
+    };
+
     if (editing) {
       updateMutation.mutate({ id: editing.id as AmenityId, data: payload });
     } else {
-      createMutation.mutate(payload);
+      createMutation.mutate(payload as CreateAmenityPayload);
     }
   });
 
@@ -162,6 +170,7 @@ export const AmenitySection = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[50px]"></TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -169,6 +178,17 @@ export const AmenitySection = () => {
                 <TableBody>
                   {amenitiesQuery.data?.map((amenity) => (
                     <TableRow key={amenity.id}>
+                      <TableCell>
+                        {amenity.imageUrl ? (
+                          <img
+                            src={amenity.imageUrl}
+                            alt={amenity.name}
+                            className="h-8 w-8 rounded object-cover"
+                          />
+                        ) : (
+                          <div className="h-8 w-8 rounded bg-muted" />
+                        )}
+                      </TableCell>
                       <TableCell>{amenity.name}</TableCell>
                       <TableCell className="text-right space-x-2">
                         <Button
@@ -223,6 +243,51 @@ export const AmenitySection = () => {
                   </p>
                 ) : null}
               </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="amenity-image">Icon</Label>
+                <Input
+                  id="amenity-image"
+                  type="file"
+                  accept="image/*"
+                  {...form.register("image")}
+                />
+                {editing?.imageUrl && !form.watch("removeImage") && (
+                  <div className="flex items-center gap-4 rounded-md border p-2">
+                    <img
+                      src={editing.imageUrl}
+                      alt="Current icon"
+                      className="h-10 w-10 rounded object-cover"
+                    />
+                    <div className="flex-1 text-sm text-muted-foreground">
+                      Current icon
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => form.setValue("removeImage", true)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+                {form.watch("removeImage") && (
+                  <div className="text-sm text-muted-foreground">
+                    Icon will be removed on save.{" "}
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="h-auto p-0"
+                      onClick={() => form.setValue("removeImage", false)}
+                    >
+                      Undo
+                    </Button>
+                  </div>
+                )}
+              </div>
+
               {mutationError ? (
                 <p className="text-sm text-destructive">
                   {mutationError instanceof Error

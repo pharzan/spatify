@@ -3,7 +3,6 @@ import { z } from "zod";
 import type { components } from "@/generated/api-types";
 
 type AdminSpatiLocationInput = components["schemas"]["AdminSpatiLocationInput"];
-type AdminAmenityInput = components["schemas"]["AdminAmenityInput"];
 type AdminLoginInput = components["schemas"]["AdminLogin"];
 
 const requiredText = (label: string) =>
@@ -47,9 +46,12 @@ export const adminSpatiLocationSchema = z.object({
   amenityIds: z.array(requiredText("Amenity")).default([]),
 }) satisfies z.ZodType<AdminSpatiLocationInput>;
 
+// Schema for the form values (what the user interacts with)
 export const adminAmenityInputSchema = z.object({
   name: requiredText("Name"),
-}) satisfies z.ZodType<AdminAmenityInput>;
+  image: z.any().optional(), // FileList or File
+  removeImage: z.boolean().optional(),
+});
 
 export const adminLoginSchema = z.object({
   email: requiredText("Email").email("Enter a valid email"),
