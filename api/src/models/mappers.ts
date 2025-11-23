@@ -21,6 +21,7 @@ export const mapRecordToSpatiLocation = (
   hours: record.opening_hours,
   type: record.store_type,
   rating: record.rating,
+  imageUrl: record.imageUrl,
   amenities: record.amenities.map(mapAmenityRecordToAmenity),
 });
 
@@ -36,6 +37,7 @@ export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
     opening_hours: spatiInput.hours,
     store_type: spatiInput.type,
     rating: spatiInput.rating,
+    imageUrl: spatiInput.imageUrl ?? null,
   };
 };
 

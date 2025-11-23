@@ -20,6 +20,7 @@ const baseSpatiSchema = z.object({
   hours: z.string(),
   type: z.string(),
   rating: z.number(),
+  imageUrl: z.string().url().nullable().describe('Public URL for the Späti image'),
 });
 
 export const SpatiLocationSchema = baseSpatiSchema.extend({
@@ -34,6 +35,7 @@ export const SpatiLocationInputSchema = baseSpatiSchema.extend({
     .array(z.string().min(1).describe('Amenity identifier'))
     .default([])
     .describe('Amenities assigned to this Späti'),
+  imageUrl: baseSpatiSchema.shape.imageUrl.optional(),
 });
 
 export type SpatiLocationInput = z.infer<typeof SpatiLocationInputSchema>;

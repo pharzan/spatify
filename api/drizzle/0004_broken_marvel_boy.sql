@@ -1,0 +1,1 @@
+ALTER TABLE "spati_locations" ADD COLUMN "image_url" text;

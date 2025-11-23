@@ -17,6 +17,7 @@ export const spatiLocations = pgTable('spati_locations', {
   opening_hours: text('opening_hours').notNull(),
   store_type: text('store_type').notNull(),
   rating: doublePrecision('rating').notNull(),
+  imageUrl: text('image_url'),
 });
 
 export const amenities = pgTable('amenities', {
