@@ -58,7 +58,7 @@ export const SpatiCard = ({
         <Text style={styles.closeIcon}>✕</Text>
       </TouchableOpacity>
 
-      <Image source={{ uri: FALLBACK_IMAGE }} style={styles.image} resizeMode="cover" />
+      <Image source={{ uri: spati.imageUrl ?? FALLBACK_IMAGE }} style={styles.image} resizeMode="cover" />
 
       <View style={styles.content}>
         <View style={styles.header}>

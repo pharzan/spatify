@@ -46,8 +46,6 @@ export interface components {
     schemas: {
         PublicSpatiLocationsResponse: components["schemas"]["PublicSpatiLocation"][];
         PublicSpatiLocation: {
-            /** @description Unique identifier of the Späti */
-            id: string;
             name: string;
             description: string;
             latitude: number;
@@ -56,6 +54,26 @@ export interface components {
             hours: string;
             type: string;
             rating: number;
+            /**
+             * Format: uri
+             * @description Public URL for the Späti image
+             */
+            imageUrl: string | null;
+            /** @description Unique identifier of the Späti */
+            id: string;
+            /** @description Amenities available at the Späti */
+            amenities: components["schemas"]["Amenity"][];
+        };
+        Amenity: {
+            /** @description Unique identifier of the amenity */
+            id: string;
+            /** @description Human readable amenity name */
+            name: string;
+            /**
+             * Format: uri
+             * @description Public URL for the amenity image
+             */
+            imageUrl: string | null;
         };
     };
     responses: never;
