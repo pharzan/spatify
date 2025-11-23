@@ -83,6 +83,17 @@ Create a `.env` file based on the example:
 cp .env.example .env
 ```
 
+Set the **Google Cloud Storage** bucket that will hold amenity images:
+
+```bash
+# .env
+AMENITY_IMAGES_BUCKET=your-public-bucket
+AMENITY_IMAGE_MAX_BYTES=5242880 # Optional (defaults to 5MB)
+```
+
+> ℹ️ The API relies on Google Application Default Credentials. Configure
+> `GOOGLE_APPLICATION_CREDENTIALS` (or run inside GCP) so the server can write to the bucket.
+
 ### 3\. Database Setup
 
 The project includes a helper script (`dev-db.sh`) wrapped in a Makefile to spin up a PostgreSQL container.
@@ -119,6 +130,19 @@ The project auto-generates OpenAPI v3 documentation.
 - **JSON Spec:** Available at `http://localhost:3333/docs/json-app`.
 
 _Note: The Swagger configuration includes a filter to hide specific Admin routes or tags depending on the configuration in `src/plugins/swagger.ts`._
+
+### Amenity Image Uploads
+
+`POST /admin/amenities` and `PUT /admin/amenities/:id` now accept `multipart/form-data` when you need to send an image. Provide the `name` field plus an `image` file (PNG/JPEG/WEBP/AVIF/SVG). The API uploads the file to GCS and stores the resulting public URL in the database.
+
+```bash
+curl -X POST http://localhost:3333/admin/amenities \
+  -H "Authorization: Bearer <token>" \
+  -F "name=Snacks" \
+  -F "image=@./snacks.png"
+```
+
+To remove an image during an update, send the form field `removeImage=true` or use the JSON flow with `"imageUrl": null`.
 
 ## 🧰 Development Commands
 

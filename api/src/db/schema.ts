@@ -22,6 +22,7 @@ export const spatiLocations = pgTable('spati_locations', {
 export const amenities = pgTable('amenities', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
+  imageUrl: text('image_url'),
 });
 
 export const spatiAmenities = pgTable(

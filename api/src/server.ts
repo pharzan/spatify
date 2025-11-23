@@ -1,6 +1,7 @@
 import Fastify, { FastifyInstance } from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
+import fastifyMultipart from '@fastify/multipart';
 import { config } from './config/environment.js';
 import { registerSwagger } from './plugins/swagger.js';
 import { db } from './db/client.js';
@@ -16,6 +17,8 @@ import { SpatiService } from './services/spatiService.js';
 import { AmenityAdminService } from './services/amenityAdminService.js';
 import { AdminAuthService } from './services/adminAuthService.js';
 import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
+import { Storage as GoogleCloudStorage } from '@google-cloud/storage';
+import { GcsAmenityImageStorage } from './services/storage/amenityImageStorage.js';
 export const buildServer = async (): Promise<FastifyInstance> => {
   const app = Fastify({
     logger: true,
@@ -25,6 +28,11 @@ export const buildServer = async (): Promise<FastifyInstance> => {
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
+  await app.register(fastifyMultipart, {
+    limits: {
+      fileSize: config.uploads.amenityImageMaxBytes,
+    },
+  });
   await registerSwagger(app);
   await app.register(fastifyJwt, {
     secret: config.auth.jwtSecret,
@@ -32,19 +40,15 @@ export const buildServer = async (): Promise<FastifyInstance> => {
 
   app.decorate('authenticate', async (request, _reply) => {
     void _reply;
-    try {
-      const payload = await request.jwtVerify<{
-        id: string;
-        email: string;
-      }>();
+    const payload = await request.jwtVerify<{
+      id: string;
+      email: string;
+    }>();
 
-      request.admin = {
-        id: payload.id,
-        email: payload.email,
-      };
-    } catch (error) {
-      throw error;
-    }
+    request.admin = {
+      id: payload.id,
+      email: payload.email,
+    };
   });
 
   const spatiRepository = new PostgresSpatiRepository(db);
@@ -53,7 +57,9 @@ export const buildServer = async (): Promise<FastifyInstance> => {
 
   const spatiService = new SpatiService(spatiRepository);
   const spatiAdminService = new SpatiAdminService(spatiRepository);
-  const amenityAdminService = new AmenityAdminService(amenityRepository);
+  const storage = new GoogleCloudStorage();
+  const amenityImageStorage = new GcsAmenityImageStorage(storage, config.storage.amenityBucket);
+  const amenityAdminService = new AmenityAdminService(amenityRepository, amenityImageStorage);
   const adminAuthService = new AdminAuthService(adminRepository);
 
   registerSpatiRoutes(app, spatiService);

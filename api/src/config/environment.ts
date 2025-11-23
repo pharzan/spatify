@@ -18,4 +18,10 @@ export const config = {
     jwtSecret: requireEnv('JWT_SECRET'),
     tokenExpiresIn: process.env.ADMIN_JWT_EXPIRES_IN ?? '30m',
   },
+  storage: {
+    amenityBucket: requireEnv('AMENITY_IMAGES_BUCKET'),
+  },
+  uploads: {
+    amenityImageMaxBytes: Number(process.env.AMENITY_IMAGE_MAX_BYTES ?? 5 * 1024 * 1024),
+  },
 };

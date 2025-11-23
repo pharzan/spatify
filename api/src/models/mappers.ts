@@ -6,6 +6,7 @@ export type SpatiLocationRecordWithAmenities = SpatiLocationRecord & { amenities
 export const mapAmenityRecordToAmenity = (record: AmenityRecord): Amenity => ({
   id: record.id,
   name: record.name,
+  imageUrl: record.imageUrl,
 });
 
 export const mapRecordToSpatiLocation = (
@@ -40,4 +41,5 @@ export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
 
 export const mapAmenityInputToRecord = (input: AmenityInput) => ({
   name: input.name,
+  imageUrl: input.imageUrl ?? null,
 });

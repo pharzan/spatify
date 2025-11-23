@@ -3,9 +3,13 @@ import { z } from 'zod';
 export const AmenitySchema = z.object({
   id: z.string().describe('Unique identifier of the amenity'),
   name: z.string().describe('Human readable amenity name'),
+  imageUrl: z.string().url().nullable().describe('Public URL for the amenity image'),
 });
 
-export const AmenityInputSchema = AmenitySchema.omit({ id: true });
+export const AmenityInputSchema = z.object({
+  name: AmenitySchema.shape.name,
+  imageUrl: AmenitySchema.shape.imageUrl.optional(),
+});
 
 const baseSpatiSchema = z.object({
   name: z.string(),

@@ -3,6 +3,7 @@ import type { DatabaseClient } from '../db/client.js';
 import { AmenityRecord, NewAmenityRecord, amenities } from '../db/schema.js';
 
 export interface AmenityRepository {
+  findById(id: string): Promise<AmenityRecord | null>;
   findAll(): Promise<AmenityRecord[]>;
   create(data: NewAmenityRecord): Promise<AmenityRecord>;
   update(id: string, data: Omit<NewAmenityRecord, 'id'>): Promise<AmenityRecord | null>;
@@ -11,6 +12,11 @@ export interface AmenityRepository {
 
 export class PostgresAmenityRepository implements AmenityRepository {
   constructor(private readonly db: DatabaseClient) {}
+
+  async findById(id: string): Promise<AmenityRecord | null> {
+    const [record] = await this.db.select().from(amenities).where(eq(amenities.id, id));
+    return record ?? null;
+  }
 
   async findAll(): Promise<AmenityRecord[]> {
     return this.db.select().from(amenities).orderBy(asc(amenities.name));

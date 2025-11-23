@@ -1,5 +1,6 @@
 import 'fastify';
 import '@fastify/jwt';
+import '@fastify/multipart';
 
 declare module 'fastify' {
   interface FastifyInstance {
