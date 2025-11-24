@@ -2,15 +2,18 @@ import { asc, eq, inArray } from 'drizzle-orm';
 import type { DatabaseClient } from '../db/client.js';
 import {
   AmenityRecord,
+  MoodRecord,
   NewSpatiLocationRecord,
   SpatiLocationRecord,
   amenities,
+  moods,
   spatiAmenities,
   spatiLocations,
 } from '../db/schema.js';
 
 export type SpatiLocationWithAmenitiesRecord = SpatiLocationRecord & {
   amenities: AmenityRecord[];
+  mood: MoodRecord | null;
 };
 
 export interface SpatiRepository {
@@ -32,21 +35,39 @@ export class PostgresSpatiRepository implements SpatiRepository {
   constructor(private readonly db: DatabaseClient) {}
 
   async findAll(): Promise<SpatiLocationWithAmenitiesRecord[]> {
-    const records = await this.db
+    const rows = await this.db
       .select()
       .from(spatiLocations)
+      .leftJoin(moods, eq(spatiLocations.moodId, moods.id))
       .orderBy(asc(spatiLocations.store_name));
+
+    const records = rows.map(({ spati_locations, moods }) => ({
+      ...spati_locations,
+      mood: moods,
+    }));
+
     return this.attachAmenities(records);
   }
 
   async findById(id: string): Promise<SpatiLocationWithAmenitiesRecord | null> {
-    const [record] = await this.db.select().from(spatiLocations).where(eq(spatiLocations.id, id));
+    const rows = await this.db
+      .select()
+      .from(spatiLocations)
+      .leftJoin(moods, eq(spatiLocations.moodId, moods.id))
+      .where(eq(spatiLocations.id, id));
+
+    const record = rows[0];
 
     if (!record) {
       return null;
     }
 
-    const [recordWithAmenities] = await this.attachAmenities([record]);
+    const flattened = {
+      ...record.spati_locations,
+      mood: record.moods,
+    };
+
+    const [recordWithAmenities] = await this.attachAmenities([flattened]);
     return recordWithAmenities ?? null;
   }
 
@@ -67,8 +88,7 @@ export class PostgresSpatiRepository implements SpatiRepository {
       return created;
     });
 
-    const [recordWithAmenities] = await this.attachAmenities([record]);
-    return recordWithAmenities;
+    return (await this.findById(record.id))!;
   }
 
   async update(
@@ -104,8 +124,7 @@ export class PostgresSpatiRepository implements SpatiRepository {
       return null;
     }
 
-    const [recordWithAmenities] = await this.attachAmenities([record]);
-    return recordWithAmenities;
+    return (await this.findById(id))!;
   }
 
   async delete(id: string): Promise<boolean> {
@@ -122,7 +141,7 @@ export class PostgresSpatiRepository implements SpatiRepository {
   }
 
   private async attachAmenities(
-    records: SpatiLocationRecord[],
+    records: (SpatiLocationRecord & { mood: MoodRecord | null })[],
   ): Promise<SpatiLocationWithAmenitiesRecord[]> {
     if (records.length === 0) {
       return [];

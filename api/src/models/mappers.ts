@@ -1,12 +1,28 @@
-import { AmenityRecord, SpatiLocationRecord } from '@/db/schema.js';
-import { Amenity, AmenityInput, SpatiLocation, SpatiLocationInput } from './api.js';
+import { AmenityRecord, MoodRecord, SpatiLocationRecord } from '@/db/schema.js';
+import {
+  Amenity,
+  AmenityInput,
+  Mood,
+  MoodInput,
+  SpatiLocation,
+  SpatiLocationInput,
+} from './api.js';
 
-export type SpatiLocationRecordWithAmenities = SpatiLocationRecord & { amenities: AmenityRecord[] };
+export type SpatiLocationRecordWithAmenities = SpatiLocationRecord & {
+  amenities: AmenityRecord[];
+  mood: MoodRecord | null;
+};
 
 export const mapAmenityRecordToAmenity = (record: AmenityRecord): Amenity => ({
   id: record.id,
   name: record.name,
   imageUrl: record.imageUrl,
+});
+
+export const mapMoodRecordToMood = (record: MoodRecord): Mood => ({
+  id: record.id,
+  name: record.name,
+  color: record.color,
 });
 
 export const mapRecordToSpatiLocation = (
@@ -23,6 +39,7 @@ export const mapRecordToSpatiLocation = (
   rating: record.rating,
   imageUrl: record.imageUrl,
   amenities: record.amenities.map(mapAmenityRecordToAmenity),
+  mood: record.mood ? mapMoodRecordToMood(record.mood) : null,
 });
 
 export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
@@ -38,10 +55,16 @@ export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
     store_type: spatiInput.type,
     rating: spatiInput.rating,
     imageUrl: spatiInput.imageUrl ?? null,
+    moodId: spatiInput.moodId ?? null,
   };
 };
 
 export const mapAmenityInputToRecord = (input: AmenityInput) => ({
   name: input.name,
   imageUrl: input.imageUrl ?? null,
+});
+
+export const mapMoodInputToRecord = (input: MoodInput) => ({
+  name: input.name,
+  color: input.color,
 });

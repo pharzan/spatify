@@ -3,6 +3,7 @@ import { FastifyError, FastifyInstance, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 import {
+  MoodSchema,
   SpatiLocationInput,
   SpatiLocationInputSchema,
   SpatiLocationSchema,
@@ -42,6 +43,7 @@ const spatiMultipartBodySchema = {
     type: { type: 'string' },
     rating: { type: 'number' },
     amenityIds: { type: 'array', items: { type: 'string' } },
+    moodId: { type: 'string', description: 'Optional Mood identifier' },
     image: {
       type: 'string',
       format: 'binary',
@@ -173,14 +175,13 @@ const parseSpatiPayload = async (request: FastifyRequest): Promise<SpatiRoutePay
   // Handle amenityIds if they came as a single string (e.g. JSON array string) or multiple fields
   // For multipart, usually multiple fields with same name or array notation.
   // Fastify multipart handling might need adjustment if array is sent differently.
-  // Let's assume simple multiple fields for now or comma separated?
-  // Actually, standard multipart array handling can be tricky.
-  // Let's stick to the simple loop above collecting them.
+  // Let's assume simple loop above collecting them.
 
   const input = parseSpatiInputOrFail({
     ...fields,
     amenityIds: amenityIds.length > 0 ? amenityIds : fields.amenityIds || [],
     imageUrl: fields.imageUrl ? fields.imageUrl : undefined,
+    moodId: fields.moodId ? fields.moodId : undefined,
   });
 
   const removeImage = truthyValues.has((fields.removeImage ?? '').toString().toLowerCase());
@@ -203,6 +204,7 @@ export const registerAdminSpatiRoutes = (
   //   'AdminSpatiLocationInput',
   // );
   const spatiIdParamSchemaRef = registerSchema(adminSpatiIdParamSchema, 'AdminSpatiIdParams');
+  registerSchema(MoodSchema, 'Mood');
 
   app.post(
     '/admin/spatis',

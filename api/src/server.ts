@@ -7,14 +7,17 @@ import { registerSwagger } from './plugins/swagger.js';
 import { db } from './db/client.js';
 import { registerAdminSpatiRoutes } from './routes/adminSpatiRoutes.js';
 import { registerAdminAmenityRoutes } from './routes/adminAmenityRoutes.js';
+import { registerAdminMoodRoutes } from './routes/adminMoodRoutes.js';
 import { registerAdminAuthRoutes } from './routes/adminAuthRoutes.js';
 import { registerSpatiRoutes } from './routes/spatiRoutes.js';
 import { PostgresSpatiRepository } from './repositories/spatiRepository.js';
 import { PostgresAmenityRepository } from './repositories/amenityRepository.js';
+import { PostgresMoodRepository } from './repositories/moodRepository.js';
 import { PostgresAdminRepository } from './repositories/adminRepository.js';
 import { SpatiAdminService } from './services/spatiAdminService.js';
 import { SpatiService } from './services/spatiService.js';
 import { AmenityAdminService } from './services/amenityAdminService.js';
+import { MoodAdminService } from './services/moodAdminService.js';
 import { AdminAuthService } from './services/adminAuthService.js';
 import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 import { Storage as GoogleCloudStorage } from '@google-cloud/storage';
@@ -54,6 +57,7 @@ export const buildServer = async (): Promise<FastifyInstance> => {
 
   const spatiRepository = new PostgresSpatiRepository(db);
   const amenityRepository = new PostgresAmenityRepository(db);
+  const moodRepository = new PostgresMoodRepository(db);
   const adminRepository = new PostgresAdminRepository(db);
 
   const spatiService = new SpatiService(spatiRepository);
@@ -62,11 +66,13 @@ export const buildServer = async (): Promise<FastifyInstance> => {
   const spatiAdminService = new SpatiAdminService(spatiRepository, spatiImageStorage);
   const amenityImageStorage = new GcsAmenityImageStorage(storage, config.storage.amenityBucket);
   const amenityAdminService = new AmenityAdminService(amenityRepository, amenityImageStorage);
+  const moodAdminService = new MoodAdminService(moodRepository);
   const adminAuthService = new AdminAuthService(adminRepository);
 
   registerSpatiRoutes(app, spatiService);
   registerAdminSpatiRoutes(app, spatiAdminService);
   registerAdminAmenityRoutes(app, amenityAdminService);
+  registerAdminMoodRoutes(app, moodAdminService);
   registerAdminAuthRoutes(app, adminAuthService);
 
   return app;

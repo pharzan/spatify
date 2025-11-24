@@ -7,6 +7,12 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
+export const moods = pgTable('moods', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  color: text('color').notNull(), // Hex code like #6b46ff
+});
+
 export const spatiLocations = pgTable('spati_locations', {
   id: text('id').primaryKey(),
   store_name: text('store_name').notNull(),
@@ -18,6 +24,7 @@ export const spatiLocations = pgTable('spati_locations', {
   store_type: text('store_type').notNull(),
   rating: doublePrecision('rating').notNull(),
   imageUrl: text('image_url'),
+  moodId: text('mood_id').references(() => moods.id),
 });
 
 export const amenities = pgTable('amenities', {
@@ -58,6 +65,8 @@ export type SpatiLocationRecord = typeof spatiLocations.$inferSelect;
 export type NewSpatiLocationRecord = typeof spatiLocations.$inferInsert;
 export type AmenityRecord = typeof amenities.$inferSelect;
 export type NewAmenityRecord = typeof amenities.$inferInsert;
+export type MoodRecord = typeof moods.$inferSelect;
+export type NewMoodRecord = typeof moods.$inferInsert;
 export type SpatiAmenityRecord = typeof spatiAmenities.$inferSelect;
 export type AdminRecord = typeof admins.$inferSelect;
 export type NewAdminRecord = typeof admins.$inferInsert;
