@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE, type Region } from "react-native-maps";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import {
-  useSpatisQuery,
-  type SpatiLocation,
-} from "./hooks/useSpatiQuery";
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+
+import { useSpatisQuery, type SpatiLocation } from "./hooks/useSpatiQuery";
 import { useUserLocation } from "./hooks/useUserLocation";
 import { SearchBar } from "./components/UI/SearchBar";
 import { SpatiMarker } from "./components/Map/SpatiMarker";
 import { SpatiCard } from "./components/UI/SpatiCard";
+import { SplashScreen } from "./components/UI/SplashScreen";
 import { GOOGLE_MAP_STYLE } from "./constants/mapStyle";
 
 const queryClient = new QueryClient();
@@ -25,10 +27,8 @@ const INITIAL_REGION: Region = {
 const SpatiMap = () => {
   const mapRef = useRef<MapView>(null);
   const { data: spatis = [], isLoading, error } = useSpatisQuery();
-  const {
-    location: userLocation,
-    errorMsg: locationError,
-  } = useUserLocation();
+  const { location: userLocation, errorMsg: locationError } = useUserLocation();
+  const insets = useSafeAreaInsets();
   const [selectedSpati, setSelectedSpati] = useState<SpatiLocation | null>(
     null
   );
@@ -68,7 +68,7 @@ const SpatiMap = () => {
   };
 
   const statusMessage = isLoading
-    ? "Loading nearby Spätis..."
+    ? `Loading nearby Spätis from ${process.env.EXPO_PUBLIC_API_BASE_URL}`
     : error
     ? error.message
     : locationError ?? null;
@@ -95,7 +95,13 @@ const SpatiMap = () => {
         ))}
       </MapView>
 
-      <SafeAreaView style={styles.overlay} pointerEvents="box-none">
+      <View
+        style={[
+          styles.overlay,
+          { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 16 },
+        ]}
+        pointerEvents="box-none"
+      >
         <SearchBar data={spatis} onSelect={handleSelect} />
         {statusMessage && (
           <View
@@ -107,7 +113,7 @@ const SpatiMap = () => {
             <Text style={styles.statusText}>{statusMessage}</Text>
           </View>
         )}
-      </SafeAreaView>
+      </View>
 
       {selectedSpati && (
         <SpatiCard
@@ -121,9 +127,17 @@ const SpatiMap = () => {
 };
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <SpatiMap />
+      <SafeAreaProvider>
+        {showSplash ? (
+          <SplashScreen onFinish={() => setShowSplash(false)} />
+        ) : (
+          <SpatiMap />
+        )}
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 }
@@ -138,8 +152,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    paddingTop: 12,
-    paddingBottom: 16,
+    left: 0,
+    right: 0,
+    // Padding handled dynamically via insets
   },
   statusPill: {
     alignSelf: "center",
