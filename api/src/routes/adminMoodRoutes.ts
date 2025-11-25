@@ -49,7 +49,7 @@ export const registerAdminMoodRoutes = (
   service: MoodAdminService,
 ): void => {
   const app = fastify.withTypeProvider<FastifyZodOpenApiTypeProvider>();
-  const moodSchemaRef = registerSchema(MoodSchema, 'MoodAdmin');
+  const moodSchemaRef = registerSchema(MoodSchema, 'Mood');
   const moodInputSchemaRef = registerSchema(MoodInputSchema, 'MoodInputAdmin');
   const moodIdParamSchemaRef = registerSchema(moodIdParamSchema, 'AdminMoodIdParams');
   const moodListSchemaRef = registerSchema(moodListSchema, 'AdminMoodsResponse');

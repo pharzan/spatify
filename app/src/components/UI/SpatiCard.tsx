@@ -46,6 +46,7 @@ export const SpatiCard = ({
   onDirections,
 }: Props) => {
   const distance = getDistanceInKm(userLocation, spati);
+  const moodColor = spati.mood?.color ?? "#000000";
 
   return (
     <View style={styles.card}>
@@ -58,7 +59,22 @@ export const SpatiCard = ({
         <Text style={styles.closeIcon}>✕</Text>
       </TouchableOpacity>
 
-      <Image source={{ uri: spati.imageUrl ?? FALLBACK_IMAGE }} style={styles.image} resizeMode="cover" />
+      <View
+        style={[
+          styles.imageGlowWrapper,
+          {
+            shadowColor: moodColor,
+            backgroundColor: moodColor,
+            borderColor: moodColor,
+          },
+        ]}
+      >
+        <Image
+          source={{ uri: spati.imageUrl ?? FALLBACK_IMAGE }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      </View>
 
       <View style={styles.content}>
         <View style={styles.header}>
@@ -125,6 +141,17 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 180,
+  },
+  imageGlowWrapper: {
+    margin: 16,
+    borderRadius: 16,
+    overflow: "hidden",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1.0,
+    shadowRadius: 60,
+    elevation: 15,
+    borderWidth: 3,
+    // Border color will be set dynamically to match the glow
   },
   content: {
     padding: 20,

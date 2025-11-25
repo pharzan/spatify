@@ -63,6 +63,8 @@ export interface components {
             id: string;
             /** @description Amenities available at the Späti */
             amenities: components["schemas"]["Amenity"][];
+            /** @description Mood associated with the Späti */
+            mood: components["schemas"]["Mood"] | null;
         };
         Amenity: {
             /** @description Unique identifier of the amenity */
@@ -74,6 +76,14 @@ export interface components {
              * @description Public URL for the amenity image
              */
             imageUrl: string | null;
+        };
+        Mood: {
+            /** @description Unique identifier of the mood */
+            id: string;
+            /** @description Name of the mood */
+            name: string;
+            /** @description Color code of the mood */
+            color: string;
         };
     };
     responses: never;

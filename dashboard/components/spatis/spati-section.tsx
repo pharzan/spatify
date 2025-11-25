@@ -20,6 +20,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -39,6 +46,7 @@ import {
   type UpdateSpatiPayload,
 } from "@/lib/api/spatis";
 import { listAmenities, type Amenity } from "@/lib/api/amenities";
+import { listMoods, type Mood } from "@/lib/api/moods";
 import {
   adminSpatiLocationSchema,
   type AdminSpatiLocationFormValues,
@@ -56,6 +64,7 @@ const emptySpatiFormValues: AdminSpatiLocationFormValues = {
   latitude: "0",
   longitude: "0",
   amenityIds: [],
+  moodId: undefined,
 };
 
 type NormalizedSpati = Spati & { amenityIds: string[] };
@@ -80,6 +89,7 @@ const toFormValues = (
   latitude: spati.latitude != null ? String(spati.latitude) : "0",
   longitude: spati.longitude != null ? String(spati.longitude) : "0",
   amenityIds: spati.amenityIds ?? [],
+  moodId: spati.mood?.id ?? undefined,
 });
 
 const getToastErrorMessage = (error: unknown) =>
@@ -94,6 +104,10 @@ export const SpatiSection = () => {
   const { data: amenities } = useQuery<Amenity[]>({
     queryKey: queryKeys.amenities,
     queryFn: () => listAmenities(),
+  });
+  const { data: moods } = useQuery<Mood[]>({
+    queryKey: queryKeys.moods,
+    queryFn: () => listMoods(),
   });
   const spatiQuery = useQuery<NormalizedSpati[]>({
     queryKey: queryKeys.spatis,
@@ -294,6 +308,7 @@ export const SpatiSection = () => {
                     <TableHead>Image</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Rating</TableHead>
+                    <TableHead>Mood</TableHead>
                     <TableHead>Amenities</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -333,6 +348,21 @@ export const SpatiSection = () => {
                         {typeof spati.rating === "number"
                           ? spati.rating.toFixed(1)
                           : "—"}
+                      </TableCell>
+                      <TableCell>
+                        {spati.mood ? (
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="h-4 w-4 rounded border"
+                              style={{ backgroundColor: spati.mood.color }}
+                            />
+                            <span className="text-sm">{spati.mood.name}</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            None
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>
                         {spati.amenities?.length ? (
@@ -559,6 +589,44 @@ export const SpatiSection = () => {
                   Open in Google Maps (new tab)
                   <ExternalLinkIcon aria-hidden="true" className="size-3.5" />
                 </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="spati-mood">Mood</Label>
+                  <Controller
+                    control={form.control}
+                    name="moodId"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value ?? "none"}
+                        onValueChange={(value) => {
+                          field.onChange(value === "none" ? undefined : value);
+                        }}
+                      >
+                        <SelectTrigger id="spati-mood">
+                          <SelectValue placeholder="Select a mood (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {moods?.map((mood) => (
+                            <SelectItem key={mood.id} value={mood.id}>
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="h-4 w-4 rounded border"
+                                  style={{ backgroundColor: mood.color }}
+                                />
+                                {mood.name}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.moodId?.message ? (
+                    <p className="text-xs text-destructive">
+                      {errors.moodId.message}
+                    </p>
+                  ) : null}
+                </div>
                 <div className="space-y-2">
                   <Label>Amenities</Label>
                   <Controller

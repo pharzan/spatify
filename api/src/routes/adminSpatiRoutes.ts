@@ -3,7 +3,6 @@ import { FastifyError, FastifyInstance, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 import {
-  MoodSchema,
   SpatiLocationInput,
   SpatiLocationInputSchema,
   SpatiLocationSchema,
@@ -204,7 +203,6 @@ export const registerAdminSpatiRoutes = (
   //   'AdminSpatiLocationInput',
   // );
   const spatiIdParamSchemaRef = registerSchema(adminSpatiIdParamSchema, 'AdminSpatiIdParams');
-  registerSchema(MoodSchema, 'Mood');
 
   app.post(
     '/admin/spatis',

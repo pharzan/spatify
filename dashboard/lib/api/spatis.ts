@@ -43,6 +43,10 @@ export const createSpati = (payload: CreateSpatiPayload) => {
     payload.amenityIds.forEach((id) => formData.append("amenityIds", id));
   }
 
+  if (payload.moodId) {
+    formData.append("moodId", payload.moodId);
+  }
+
   if (payload.image) {
     formData.append("image", payload.image as unknown as Blob);
   }
@@ -69,6 +73,10 @@ export const updateSpati = (id: SpatiId, data: UpdateSpatiPayload) => {
 
   if (data.amenityIds) {
     data.amenityIds.forEach((id) => formData.append("amenityIds", id));
+  }
+
+  if (data.moodId) {
+    formData.append("moodId", data.moodId);
   }
 
   if (data.image) {

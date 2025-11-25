@@ -46,6 +46,7 @@ export const adminSpatiLocationSchema = z.object({
   type: requiredText("Type"),
   rating: numericField("Rating", { min: 0, max: 5 }),
   amenityIds: z.array(requiredText("Amenity")).default([]),
+  moodId: z.string().optional(),
   image: z.any().optional(), // FileList or File
   removeImage: z.boolean().optional(),
 }) satisfies z.ZodType<AdminSpatiLocationInput>;
@@ -55,6 +56,14 @@ export const adminAmenityInputSchema = z.object({
   name: requiredText("Name"),
   image: z.any().optional(), // FileList or File
   removeImage: z.boolean().optional(),
+});
+
+export const adminMoodInputSchema = z.object({
+  name: requiredText("Name"),
+  color: requiredText("Color").regex(
+    /^#[0-9A-Fa-f]{6}$/,
+    "Color must be a valid hex code (e.g., #FF5733)",
+  ),
 });
 
 export const adminLoginSchema = z.object({
@@ -71,5 +80,8 @@ export type AdminSpatiLocationPayload = z.infer<
 
 export type AdminAmenityFormValues = z.input<typeof adminAmenityInputSchema>;
 export type AdminAmenityPayload = z.infer<typeof adminAmenityInputSchema>;
+
+export type AdminMoodFormValues = z.input<typeof adminMoodInputSchema>;
+export type AdminMoodPayload = z.infer<typeof adminMoodInputSchema>;
 
 export type AdminLoginFormValues = z.input<typeof adminLoginSchema>;

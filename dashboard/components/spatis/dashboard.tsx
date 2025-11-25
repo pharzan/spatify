@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, Sparkles } from "lucide-react";
+import { Building2, Palette, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 import { AmenitySection } from "./amenity-section";
+import { MoodSection } from "./mood-section";
 import { SpatiSection } from "./spati-section";
 
 const navItems = [
@@ -20,6 +21,12 @@ const navItems = [
     label: "Amenities",
     description: "Edit amenity catalog",
     Icon: Sparkles,
+  },
+  {
+    id: "moods" as const,
+    label: "Moods",
+    description: "Manage mood colors",
+    Icon: Palette,
   },
 ];
 
@@ -111,7 +118,13 @@ export const Dashboard = ({ onLogout }: DashboardProps) => {
               </Button>
             ))}
           </div>
-          {activeSection === "spatis" ? <SpatiSection /> : <AmenitySection />}
+          {activeSection === "spatis" ? (
+            <SpatiSection />
+          ) : activeSection === "amenities" ? (
+            <AmenitySection />
+          ) : (
+            <MoodSection />
+          )}
         </div>
       </main>
     </div>

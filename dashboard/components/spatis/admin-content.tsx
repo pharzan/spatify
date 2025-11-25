@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { getStoredAuthToken, setAuthToken } from "@/lib/auth/token-storage";
