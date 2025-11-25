@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import { StarRating } from "./StarRating";
 import type { SpatiLocation } from "../../hooks/useSpatiQuery";
 
 type Coordinates = { latitude: number; longitude: number };
@@ -79,7 +80,7 @@ export const SpatiCard = ({
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.name}>{spati.name}</Text>
-          <Text style={styles.rating}>⭐ {spati.rating.toFixed(1)}</Text>
+          <StarRating rating={spati.rating} />
         </View>
         <Text style={styles.description} numberOfLines={2}>
           {spati.description}
@@ -88,6 +89,23 @@ export const SpatiCard = ({
         <Text style={styles.meta}>
           {spati.type} • {spati.hours}
         </Text>
+
+        {spati.amenities && spati.amenities.length > 0 && (
+          <View style={styles.amenitiesContainer}>
+            {spati.amenities.map(
+              (amenity) =>
+                amenity.imageUrl && (
+                  <View key={amenity.id} style={styles.amenityWrapper}>
+                    <Image
+                      source={{ uri: amenity.imageUrl }}
+                      style={styles.amenityIcon}
+                      resizeMode="contain"
+                    />
+                  </View>
+                )
+            )}
+          </View>
+        )}
 
         {distance && (
           <Text style={styles.distance}>{distance} km from you</Text>
@@ -201,5 +219,23 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
+  },
+  amenitiesContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 12,
+    gap: 8,
+  },
+  amenityWrapper: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#222222",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  amenityIcon: {
+    width: 20,
+    height: 20,
   },
 });
