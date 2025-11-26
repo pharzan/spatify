@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,33 +9,82 @@ import {
   View,
 } from "react-native";
 import type { SpatiLocation } from "../../hooks/useSpatiQuery";
+import type { Amenity } from "../../hooks/useAmenitiesQuery";
+import type { Mood } from "../../hooks/useMoodsQuery";
 
 type Props = {
   data?: SpatiLocation[];
+  amenities?: Amenity[];
+  moods?: Mood[];
   onSelect: (spati: SpatiLocation) => void;
   placeholder?: string;
 };
 
 export const SearchBar = ({
   data = [],
+  amenities = [],
+  moods = [],
   onSelect,
   placeholder = "Search Spätis...",
 }: Props) => {
   const [query, setQuery] = useState("");
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
+
+  const toggleAmenity = (id: string) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
+    );
+  };
+
+  const toggleMood = (id: string) => {
+    setSelectedMoods((prev) =>
+      prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]
+    );
+  };
 
   const results = useMemo(() => {
     const trimmed = query.trim().toLowerCase();
-    if (!trimmed) return [];
+
+    // If no query and no filters, return empty
+    if (
+      !trimmed &&
+      selectedAmenities.length === 0 &&
+      selectedMoods.length === 0
+    ) {
+      return [];
+    }
 
     return data.filter((spati) => {
-      const searchable = `${spati.name} ${spati.description} ${spati.address}`.toLowerCase();
-      return searchable.includes(trimmed);
+      // Text search
+      const matchesSearch =
+        !trimmed ||
+        `${spati.name} ${spati.description} ${spati.address}`
+          .toLowerCase()
+          .includes(trimmed);
+
+      // Amenity filter (AND logic - must have all selected amenities)
+      const matchesAmenities =
+        selectedAmenities.length === 0 ||
+        selectedAmenities.every((id) =>
+          spati.amenities.some((a) => a.id === id)
+        );
+
+      // Mood filter (OR logic - can match any selected mood)
+      const matchesMoods =
+        selectedMoods.length === 0 ||
+        (spati.mood && selectedMoods.includes(spati.mood.id));
+
+      return matchesSearch && matchesAmenities && matchesMoods;
     });
-  }, [data, query]);
+  }, [data, query, selectedAmenities, selectedMoods]);
 
   const handleSelect = (spati: SpatiLocation) => {
     onSelect(spati);
     setQuery("");
+    // Optional: clear filters on select?
+    // setSelectedAmenities([]);
+    // setSelectedMoods([]);
   };
 
   return (
@@ -59,6 +109,78 @@ export const SearchBar = ({
             <Text style={styles.clearIcon}>✕</Text>
           </TouchableOpacity>
         )}
+      </View>
+
+      {/* Filters */}
+      <View style={styles.filtersContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContent}
+        >
+          {moods.map((mood) => {
+            const isSelected = selectedMoods.includes(mood.id);
+            return (
+              <TouchableOpacity
+                key={mood.id}
+                style={[
+                  styles.filterChip,
+                  isSelected && {
+                    backgroundColor: mood.color,
+                    borderColor: mood.color,
+                  },
+                ]}
+                onPress={() => toggleMood(mood.id)}
+              >
+                <Text
+                  style={[
+                    styles.filterText,
+                    isSelected && styles.filterTextSelected,
+                  ]}
+                >
+                  {mood.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+
+          <View style={styles.filterDivider} />
+
+          {amenities.map((amenity) => {
+            const isSelected = selectedAmenities.includes(amenity.id);
+            return (
+              <TouchableOpacity
+                key={amenity.id}
+                style={[
+                  styles.filterChip,
+                  amenity.imageUrl ? styles.filterChipIcon : null,
+                  isSelected && styles.filterChipSelected,
+                  isSelected && amenity.imageUrl
+                    ? styles.filterChipIconSelected
+                    : null,
+                ]}
+                onPress={() => toggleAmenity(amenity.id)}
+              >
+                {amenity.imageUrl ? (
+                  <Image
+                    source={{ uri: amenity.imageUrl }}
+                    style={styles.amenityIcon}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <Text
+                    style={[
+                      styles.filterText,
+                      isSelected && styles.filterTextSelected,
+                    ]}
+                  >
+                    {amenity.name}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
 
       {results.length > 0 && (
@@ -121,6 +243,59 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#555",
     marginLeft: 8,
+  },
+  filtersContainer: {
+    marginTop: 12,
+  },
+  filtersContent: {
+    paddingRight: 16,
+    alignItems: "center",
+  },
+  filterChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    marginRight: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  filterChipIcon: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: "#333",
+    borderColor: "#333",
+  },
+  filterChipIconSelected: {
+    borderColor: "#00E676",
+    borderWidth: 2,
+  },
+  amenityIcon: {
+    width: 20,
+    height: 20,
+  },
+  filterChipSelected: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#1a1a1a",
+  },
+  filterText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: "#333",
+  },
+  filterTextSelected: {
+    color: "white",
+  },
+  filterDivider: {
+    width: 1,
+    height: 20,
+    backgroundColor: "#ccc",
+    marginRight: 8,
   },
   resultsContainer: {
     marginTop: 12,

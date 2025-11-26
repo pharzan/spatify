@@ -8,6 +8,8 @@ import {
 } from "react-native-safe-area-context";
 
 import { useSpatisQuery, type SpatiLocation } from "./hooks/useSpatiQuery";
+import { useAmenitiesQuery } from "./hooks/useAmenitiesQuery";
+import { useMoodsQuery } from "./hooks/useMoodsQuery";
 import { useUserLocation } from "./hooks/useUserLocation";
 import { SearchBar } from "./components/UI/SearchBar";
 import { SpatiMarker } from "./components/Map/SpatiMarker";
@@ -27,7 +29,24 @@ const INITIAL_REGION: Region = {
 
 const SpatiMap = () => {
   const mapRef = useRef<MapView>(null);
-  const { data: spatis = [], isLoading, error } = useSpatisQuery();
+  const {
+    data: spatis = [],
+    isLoading: spatisLoading,
+    error: spatisError,
+  } = useSpatisQuery();
+
+  const {
+    data: amenities = [],
+    isLoading: amenitiesLoading,
+    error: amenitiesError,
+  } = useAmenitiesQuery();
+
+  const {
+    data: moods = [],
+    isLoading: moodsLoading,
+    error: moodsError,
+  } = useMoodsQuery();
+
   const { location: userLocation, errorMsg: locationError } = useUserLocation();
   const insets = useSafeAreaInsets();
   const [selectedSpati, setSelectedSpati] = useState<SpatiLocation | null>(
@@ -87,10 +106,13 @@ const SpatiMap = () => {
     );
   };
 
+  const isLoading = spatisLoading || amenitiesLoading || moodsLoading;
+  const error = spatisError || amenitiesError || moodsError;
+
   const statusMessage = isLoading
-    ? `Loading nearby Spätis from ${process.env.EXPO_PUBLIC_API_BASE_URL}`
+    ? `Loading data... (S:${spatis.length} A:${amenities.length} M:${moods.length})`
     : error
-    ? error.message
+    ? `Error: ${error.message}`
     : locationError ?? null;
 
   return (
@@ -123,7 +145,12 @@ const SpatiMap = () => {
         ]}
         pointerEvents="box-none"
       >
-        <SearchBar data={spatis} onSelect={handleSelect} />
+        <SearchBar
+          data={spatis}
+          amenities={amenities}
+          moods={moods}
+          onSelect={handleSelect}
+        />
         {statusMessage && (
           <View
             style={[
