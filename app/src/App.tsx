@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Linking } from "react-native";
 import MapView, { PROVIDER_GOOGLE, type Region } from "react-native-maps";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -11,6 +11,7 @@ import { useSpatisQuery, type SpatiLocation } from "./hooks/useSpatiQuery";
 import { useUserLocation } from "./hooks/useUserLocation";
 import { SearchBar } from "./components/UI/SearchBar";
 import { SpatiMarker } from "./components/Map/SpatiMarker";
+import { UserLocationButton } from "./components/Map/UserLocationButton";
 import { SpatiCard } from "./components/UI/SpatiCard";
 import { SplashScreen } from "./components/UI/SplashScreen";
 import { GOOGLE_MAP_STYLE } from "./constants/mapStyle";
@@ -67,6 +68,25 @@ const SpatiMap = () => {
     );
   };
 
+  const handleDirections = () => {
+    if (!selectedSpati) return;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedSpati.latitude},${selectedSpati.longitude}`;
+    Linking.openURL(url);
+  };
+
+  const handleCenterOnUser = () => {
+    if (!userLocation) return;
+    mapRef.current?.animateToRegion(
+      {
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      },
+      500
+    );
+  };
+
   const statusMessage = isLoading
     ? `Loading nearby Spätis from ${process.env.EXPO_PUBLIC_API_BASE_URL}`
     : error
@@ -84,6 +104,7 @@ const SpatiMap = () => {
         showsUserLocation
         showsPointsOfInterest={false}
         showsMyLocationButton={false}
+        toolbarEnabled={false}
       >
         {spatis.map((spati) => (
           <SpatiMarker
@@ -115,11 +136,21 @@ const SpatiMap = () => {
         )}
       </View>
 
+      <UserLocationButton
+        onPress={handleCenterOnUser}
+        style={{
+          position: "absolute",
+          bottom: selectedSpati ? 400 : insets.bottom + 32,
+          right: 16,
+        }}
+      />
+
       {selectedSpati && (
         <SpatiCard
           spati={selectedSpati}
           userLocation={userLocation}
           onClose={() => setSelectedSpati(null)}
+          onDirections={handleDirections}
         />
       )}
     </View>
@@ -150,8 +181,6 @@ const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
     top: 0,
-    left: 0,
-    right: 0,
     left: 0,
     right: 0,
     // Padding handled dynamically via insets
