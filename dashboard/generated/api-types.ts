@@ -40,6 +40,78 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/amenities": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List amenities */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["PublicAmenitiesResponse"];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moods": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List moods */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["PublicMoodsResponse"];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/admin/spatis": {
     parameters: {
       query?: never;
@@ -440,7 +512,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": components["schemas"]["MoodAdmin"];
+            "application/json": components["schemas"]["Mood"];
           };
         };
       };
@@ -482,7 +554,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": components["schemas"]["MoodAdmin"];
+            "application/json": components["schemas"]["Mood"];
           };
         };
       };
@@ -592,7 +664,7 @@ export interface components {
       /** @description Amenities available at the Späti */
       amenities: components["schemas"]["Amenity"][];
       /** @description Mood associated with the Späti */
-      mood: components["schemas"]["MoodAdmin"] | null;
+      mood: components["schemas"]["Mood"] | null;
     };
     Amenity: {
       /** @description Unique identifier of the amenity */
@@ -605,7 +677,7 @@ export interface components {
        */
       imageUrl: string | null;
     };
-    MoodAdmin: {
+    Mood: {
       /** @description Unique identifier of the mood */
       id: string;
       /** @description Name of the mood */
@@ -613,9 +685,11 @@ export interface components {
       /** @description Color code of the mood */
       color: string;
     };
+    PublicAmenitiesResponse: components["schemas"]["Amenity"][];
+    PublicMoodsResponse: components["schemas"]["Mood"][];
     AdminSpatiLocation: components["schemas"]["PublicSpatiLocation"];
     AdminAmenitiesResponse: components["schemas"]["Amenity"][];
-    AdminMoodsResponse: components["schemas"]["MoodAdmin"][];
+    AdminMoodsResponse: components["schemas"]["Mood"][];
     AdminAuthResponse: {
       /** @description Bearer token used for admin-only APIs */
       token: string;

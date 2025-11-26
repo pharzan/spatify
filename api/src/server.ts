@@ -60,7 +60,7 @@ export const buildServer = async (): Promise<FastifyInstance> => {
   const moodRepository = new PostgresMoodRepository(db);
   const adminRepository = new PostgresAdminRepository(db);
 
-  const spatiService = new SpatiService(spatiRepository);
+  const spatiService = new SpatiService(spatiRepository, amenityRepository, moodRepository);
   const storage = new GoogleCloudStorage();
   const spatiImageStorage = new GcsSpatiImageStorage(storage, config.storage.amenityBucket);
   const spatiAdminService = new SpatiAdminService(spatiRepository, spatiImageStorage);

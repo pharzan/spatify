@@ -6,6 +6,8 @@ import { SpatiService } from '../services/spatiService.js';
 import { registerSchema } from '../utils/schema.js';
 
 const spatiListSchema = z.array(SpatiLocationSchema);
+const amenityListSchema = z.array(AmenitySchema);
+const moodListSchema = z.array(MoodSchema);
 
 export const registerSpatiRoutes = (fastify: FastifyInstance, service: SpatiService): void => {
   // Register schemas with public names for the public API spec
@@ -13,6 +15,8 @@ export const registerSpatiRoutes = (fastify: FastifyInstance, service: SpatiServ
   registerSchema(AmenitySchema, 'Amenity');
   registerSchema(SpatiLocationSchema, 'PublicSpatiLocation');
   const spatiListSchemaRef = registerSchema(spatiListSchema, 'PublicSpatiLocationsResponse');
+  const amenityListSchemaRef = registerSchema(amenityListSchema, 'PublicAmenitiesResponse');
+  const moodListSchemaRef = registerSchema(moodListSchema, 'PublicMoodsResponse');
 
   const listSchema = {
     tags: ['Spatis'],
@@ -28,5 +32,33 @@ export const registerSpatiRoutes = (fastify: FastifyInstance, service: SpatiServ
       schema: listSchema,
     },
     async () => service.listSpatis(),
+  );
+
+  fastify.get(
+    '/amenities',
+    {
+      schema: {
+        tags: ['Amenities'],
+        summary: 'List amenities',
+        response: {
+          200: amenityListSchemaRef,
+        },
+      },
+    },
+    async () => service.listAmenities(),
+  );
+
+  fastify.get(
+    '/moods',
+    {
+      schema: {
+        tags: ['Moods'],
+        summary: 'List moods',
+        response: {
+          200: moodListSchemaRef,
+        },
+      },
+    },
+    async () => service.listMoods(),
   );
 };
