@@ -124,7 +124,7 @@ const SpatiMap = () => {
         initialRegion={INITIAL_REGION}
         customMapStyle={GOOGLE_MAP_STYLE}
         showsUserLocation
-        showsPointsOfInterest={false}
+        showsPointsOfInterests={false}
         showsMyLocationButton={false}
         toolbarEnabled={false}
       >
