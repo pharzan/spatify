@@ -1,4 +1,10 @@
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+console.log(
+  "Loaded Google Maps API Key:",
+  GOOGLE_MAPS_API_KEY
+    ? "Yes (" + GOOGLE_MAPS_API_KEY.substring(0, 5) + "...)"
+    : "No"
+);
 
 export default {
   expo: {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   filtersContainer: {
-    marginTop: 12,
+    marginTop: 8,
   },
   filtersContent: {
     paddingRight: 16,
