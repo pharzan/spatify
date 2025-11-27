@@ -44,5 +44,6 @@ export default {
       },
       googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     },
+    plugins: ["expo-video"],
   },
 };
