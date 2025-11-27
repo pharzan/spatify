@@ -110,7 +110,7 @@ const SpatiMap = () => {
   const error = spatisError || amenitiesError || moodsError;
 
   const statusMessage = isLoading
-    ? `Loading data... (S:${spatis.length} A:${amenities.length} M:${moods.length})`
+    ? `Loading data...`
     : error
     ? `Error: ${error.message}`
     : locationError ?? null;

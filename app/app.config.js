@@ -44,5 +44,21 @@ export default {
       },
       googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     },
+    plugins: [
+      [
+        "react-native-maps",
+        {
+          apiKey: GOOGLE_MAPS_API_KEY,
+        },
+      ],
+      [
+        "expo-location",
+        {
+          locationAlwaysAndWhenInUsePermission:
+            "Allow $(PRODUCT_NAME) to use your location.",
+        },
+      ],
+      "expo-video",
+    ],
   },
 };

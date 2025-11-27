@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import {
+  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -185,13 +186,13 @@ export const SearchBar = ({
 
       {results.length > 0 && (
         <View style={styles.resultsContainer}>
-          <ScrollView
+          <FlatList
+            data={results}
+            keyExtractor={(item) => item.id}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={styles.resultsContent}
-          >
-            {results.map((spati) => (
+            renderItem={({ item: spati }) => (
               <TouchableOpacity
-                key={spati.id}
                 style={styles.resultRow}
                 onPress={() => handleSelect(spati)}
               >
@@ -204,8 +205,8 @@ export const SearchBar = ({
                 </View>
                 <Text style={styles.resultRating}>⭐ {spati.rating}</Text>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
+            )}
+          />
         </View>
       )}
     </View>

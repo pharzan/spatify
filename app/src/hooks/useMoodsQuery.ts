@@ -13,7 +13,6 @@ export const moodKeys = {
 };
 
 const fetchMoods = async (): Promise<MoodsResponse> => {
-    console.log("Fetching moods from:", `${API_BASE_URL}/moods`);
     try {
         const response = await fetch(`${API_BASE_URL}/moods`, {
             headers: {
@@ -21,7 +20,6 @@ const fetchMoods = async (): Promise<MoodsResponse> => {
             },
         });
 
-        console.log("Moods response status:", response.status);
 
         if (!response.ok) {
             const message = await response.text().catch(() => "");
@@ -30,7 +28,6 @@ const fetchMoods = async (): Promise<MoodsResponse> => {
         }
 
         const json = await response.json();
-        console.log("Moods fetched count:", json.length);
         return json;
     } catch (error) {
         console.error("Moods fetch error:", error);

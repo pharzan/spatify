@@ -13,7 +13,6 @@ export const amenityKeys = {
 };
 
 const fetchAmenities = async (): Promise<AmenitiesResponse> => {
-    console.log("Fetching amenities from:", `${API_BASE_URL}/amenities`);
     try {
         const response = await fetch(`${API_BASE_URL}/amenities`, {
             headers: {
@@ -21,7 +20,6 @@ const fetchAmenities = async (): Promise<AmenitiesResponse> => {
             },
         });
 
-        console.log("Amenities response status:", response.status);
 
         if (!response.ok) {
             const message = await response.text().catch(() => "");
@@ -30,7 +28,6 @@ const fetchAmenities = async (): Promise<AmenitiesResponse> => {
         }
 
         const json = await response.json();
-        console.log("Amenities fetched count:", json.length);
         return json;
     } catch (error) {
         console.error("Amenities fetch error:", error);

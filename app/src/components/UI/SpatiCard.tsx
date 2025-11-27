@@ -62,19 +62,27 @@ export const SpatiCard = ({
 
       <View
         style={[
-          styles.imageGlowWrapper,
+          styles.imageGlowContainer,
           {
             shadowColor: moodColor,
-            backgroundColor: moodColor,
-            borderColor: moodColor,
           },
         ]}
       >
-        <Image
-          source={{ uri: spati.imageUrl ?? FALLBACK_IMAGE }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+        <View
+          style={[
+            styles.imageContainer,
+            {
+              borderColor: moodColor,
+              backgroundColor: moodColor,
+            },
+          ]}
+        >
+          <Image
+            source={{ uri: spati.imageUrl ?? FALLBACK_IMAGE }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
       </View>
 
       <View style={styles.content}>
@@ -160,16 +168,19 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 180,
   },
-  imageGlowWrapper: {
+  imageGlowContainer: {
     margin: 16,
+    // Shadow properties for the glow
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    elevation: 10, // Reduced elevation for Android performance
+    backgroundColor: "transparent", // Important for shadow on Android
+  },
+  imageContainer: {
     borderRadius: 16,
     overflow: "hidden",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1.0,
-    shadowRadius: 60,
-    elevation: 15,
     borderWidth: 3,
-    // Border color will be set dynamically to match the glow
   },
   content: {
     padding: 20,
