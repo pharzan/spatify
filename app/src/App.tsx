@@ -53,6 +53,8 @@ const SpatiMap = () => {
     null
   );
 
+  const [mapReady, setMapReady] = useState(false);
+
   useEffect(() => {
     if (!userLocation) return;
     mapRef.current?.animateToRegion(
@@ -110,7 +112,7 @@ const SpatiMap = () => {
   const error = spatisError || amenitiesError || moodsError;
 
   const statusMessage = isLoading
-    ? `Loading data... (S:${spatis.length} A:${amenities.length} M:${moods.length})`
+    ? `Loading data...`
     : error
     ? `Error: ${error.message}`
     : locationError ?? null;
@@ -127,15 +129,17 @@ const SpatiMap = () => {
         showsPointsOfInterest={false}
         showsMyLocationButton={false}
         toolbarEnabled={false}
+        onMapReady={() => setMapReady(true)}
       >
-        {spatis.map((spati) => (
-          <SpatiMarker
-            key={spati.id}
-            spati={spati}
-            onPress={() => handleSelect(spati)}
-            isSelected={selectedSpati?.id === spati.id}
-          />
-        ))}
+        {mapReady &&
+          spatis.map((spati) => (
+            <SpatiMarker
+              key={spati.id}
+              spati={spati}
+              onPress={() => handleSelect(spati)}
+              isSelected={selectedSpati?.id === spati.id}
+            />
+          ))}
       </MapView>
 
       <View

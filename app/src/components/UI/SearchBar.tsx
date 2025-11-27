@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  FlatList,
 } from "react-native";
+import { Image } from "expo-image";
 import type { SpatiLocation } from "../../hooks/useSpatiQuery";
 import type { Amenity } from "../../hooks/useAmenitiesQuery";
 import type { Mood } from "../../hooks/useMoodsQuery";
@@ -87,6 +88,22 @@ export const SearchBar = ({
     // setSelectedMoods([]);
   };
 
+  const renderResultItem = ({ item }: { item: SpatiLocation }) => (
+    <TouchableOpacity
+      style={styles.resultRow}
+      onPress={() => handleSelect(item)}
+    >
+      <View style={styles.resultTextContainer}>
+        <Text style={styles.resultPrimary}>{item.name}</Text>
+        <Text style={styles.resultSecondary} numberOfLines={2}>
+          {item.description}
+        </Text>
+        <Text style={styles.resultMeta}>{item.address}</Text>
+      </View>
+      <Text style={styles.resultRating}>⭐ {item.rating}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.inputRow}>
@@ -165,7 +182,7 @@ export const SearchBar = ({
                   <Image
                     source={{ uri: amenity.imageUrl }}
                     style={styles.amenityIcon}
-                    resizeMode="contain"
+                    contentFit="contain"
                   />
                 ) : (
                   <Text
@@ -185,27 +202,16 @@ export const SearchBar = ({
 
       {results.length > 0 && (
         <View style={styles.resultsContainer}>
-          <ScrollView
+          <FlatList
+            data={results}
+            renderItem={renderResultItem}
+            keyExtractor={(item) => item.id.toString()}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={styles.resultsContent}
-          >
-            {results.map((spati) => (
-              <TouchableOpacity
-                key={spati.id}
-                style={styles.resultRow}
-                onPress={() => handleSelect(spati)}
-              >
-                <View style={styles.resultTextContainer}>
-                  <Text style={styles.resultPrimary}>{spati.name}</Text>
-                  <Text style={styles.resultSecondary} numberOfLines={2}>
-                    {spati.description}
-                  </Text>
-                  <Text style={styles.resultMeta}>{spati.address}</Text>
-                </View>
-                <Text style={styles.resultRating}>⭐ {spati.rating}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+            initialNumToRender={5}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+          />
         </View>
       )}
     </View>
@@ -307,6 +313,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 3,
+    overflow: "hidden",
   },
   resultsContent: {
     paddingVertical: 4,

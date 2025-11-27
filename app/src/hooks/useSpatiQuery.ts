@@ -34,5 +34,7 @@ export const useSpatisQuery = (
   useQuery<SpatiListResponse, Error>({
     queryKey: spatiKeys.list(),
     queryFn: fetchSpatis,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
     ...options,
   });

@@ -44,5 +44,7 @@ export const useAmenitiesQuery = (
     useQuery<AmenitiesResponse, Error>({
         queryKey: amenityKeys.list(),
         queryFn: fetchAmenities,
+        staleTime: 1000 * 60 * 60 * 24, // 24 hours (static data)
+        gcTime: 1000 * 60 * 60 * 48, // 48 hours
         ...options,
     });

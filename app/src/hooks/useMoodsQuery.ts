@@ -44,5 +44,7 @@ export const useMoodsQuery = (
     useQuery<MoodsResponse, Error>({
         queryKey: moodKeys.list(),
         queryFn: fetchMoods,
+        staleTime: 1000 * 60 * 60 * 24, // 24 hours (static data)
+        gcTime: 1000 * 60 * 60 * 48, // 48 hours
         ...options,
     });

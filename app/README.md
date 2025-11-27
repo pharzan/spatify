@@ -108,5 +108,5 @@ first create a keystore file.
 2. npx expo run:android
 3. npm run setup:android-signing -- --store-file my-release-key.keystore --store-password 123456 --key-alias spatifyRelease --key-password 123456
 4. cd android && NODE_ENV=production ./gradlew assembleRelease
-5. open app/build/outputs/apk/release/
+5. open app/build/outputs/apk/release/ && cd ..
 

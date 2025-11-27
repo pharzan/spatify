@@ -1,4 +1,5 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import { StarRating } from "./StarRating";
 import type { SpatiLocation } from "../../hooks/useSpatiQuery";
 
@@ -73,7 +74,8 @@ export const SpatiCard = ({
         <Image
           source={{ uri: spati.imageUrl ?? FALLBACK_IMAGE }}
           style={styles.image}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={200}
         />
       </View>
 
@@ -99,7 +101,7 @@ export const SpatiCard = ({
                     <Image
                       source={{ uri: amenity.imageUrl }}
                       style={styles.amenityIcon}
-                      resizeMode="contain"
+                      contentFit="contain"
                     />
                   </View>
                 )

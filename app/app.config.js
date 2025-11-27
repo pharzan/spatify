@@ -6,7 +6,7 @@ export default {
     slug: "app",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/app-icons/ios/AppIcon~ios-marketing.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
     splash: {
@@ -23,7 +23,7 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/app-icons/android/play_store_512.png",
         backgroundColor: "#ffffff",
       },
       edgeToEdgeEnabled: true,
