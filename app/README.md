@@ -6,9 +6,10 @@ A React Native application built with **Expo** that helps users locate "Spätis"
 
   * **Interactive Map:** `react-native-maps` renders stylized Google maps focused on Berlin.
   * **Geolocation:** The `useUserLocation` hook wraps `expo-location` to request permission and read the device position.
-  * **Search & Discovery:** A searchable overlay lets users quickly jump to any Späti returned by the backend.
-  * **Location Details:** Selecting a marker shows a rich card with ratings, hours, address, and distance from the user.
-  * **Data Management:** `@tanstack/react-query` powers the `useSpatiQuery` hook for cached API access.
+  * **Search & Discovery:** A searchable overlay lets users quickly jump to any Späti returned by the backend. Now supports **Amenity Icons** and **Mood Filters** for better discovery.
+  * **Location Details:** Selecting a marker shows a rich `SpatiCard` with star ratings, hours, address, and distance from the user.
+  * **Video Splash Screen:** A custom splash screen powered by `expo-video` for a premium startup experience.
+  * **Data Management:** `@tanstack/react-query` powers hooks like `useSpatiQuery`, `useAmenitiesQuery`, and `useMoodsQuery` for cached API access.
 
 ## 🏗️ Tech Stack
 
@@ -17,10 +18,12 @@ A React Native application built with **Expo** that helps users locate "Spätis"
   * **Language:** TypeScript
   * **State/Data:** React Query (TanStack Query)
   * **Maps:** Google Maps via `react-native-maps`
+  * **Media:** `expo-video`, `expo-image`
+  * **Tooling:** `openapi-typescript` for generating API types
 
 ## 📂 Project Structure
 
-UI, hooks, and constants now live under `src/` while generated API typings remain at the root:
+UI, hooks, and constants live under `src/` while generated API typings and scripts remain at the root:
 
 ```txt
 app/
@@ -34,17 +37,27 @@ app/
 │   └── generate-api-types.mjs
 └── src/
     ├── components/
-    │   ├── Map/SpatiMarker.tsx
-    │   └── UI/{SearchBar.tsx, SpatiCard.tsx}
+    │   ├── Map/
+    │   │   ├── SpatiMarker.tsx
+    │   │   └── UserLocationButton.tsx
+    │   └── UI/
+    │       ├── SearchBar.tsx
+    │       ├── SpatiCard.tsx
+    │       ├── SplashScreen.tsx
+    │       └── StarRating.tsx
     ├── constants/mapStyle.ts
-    └── hooks/{useSpatiQuery.ts, useUserLocation.ts}
+    └── hooks/
+        ├── useAmenitiesQuery.ts
+        ├── useMoodsQuery.ts
+        ├── useSpatiQuery.ts
+        └── useUserLocation.ts
 ```
 
 ## 🧱 Architecture
 
-1. **Entry Point:** `index.ts` registers `App.tsx`, which only wraps the map screen in a `QueryClientProvider`.
+1. **Entry Point:** `index.ts` registers `App.tsx`, which wraps the map screen in a `QueryClientProvider`.
 2. **Presentation:** `SpatiMap` (inside `App.tsx`) composes the map, overlays, and card. All UI widgets live in `src/components`.
-3. **Hooks:** `useSpatiQuery` handles networking + typing, while `useUserLocation` encapsulates permissions and geolocation side effects.
+3. **Hooks:** Custom hooks (`useSpatiQuery`, `useAmenitiesQuery`, etc.) handle networking + typing, while `useUserLocation` encapsulates permissions and geolocation side effects.
 4. **Constants:** `GOOGLE_MAP_STYLE` contains the single map-style definition.
 
 This keeps `App.tsx` declarative and easy to scan while every concern (API, location, UI pieces) lives in its own module.
@@ -93,7 +106,7 @@ npm run web      # run web preview
 
 ## 🔑 Key Configuration Files
 
-  * **`app.config.js`** – Uses the `.env` values to configure map API keys and native identifiers.
+  * **`app.config.js`** – Uses the `.env` values to configure map API keys and native identifiers. It also configures plugins like `expo-video`.
   * **`eas.json`** – Profiles for building with Expo Application Services.
 
 -----

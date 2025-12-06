@@ -1,6 +1,6 @@
 # Spätify Admin Dashboard
 
-A modern, responsive administrative dashboard built with **Next.js 16** and **React 19** for managing "Späti" locations and amenities. This application serves as the frontend interface for administrators to curate content for the Spatify platform.
+A modern, responsive administrative dashboard built with **Next.js 16** and **React 19** for managing "Späti" locations, amenities, and moods. This application serves as the frontend interface for administrators to curate content for the Spatify platform.
 
 ## 🏗 Architecture
 
@@ -25,7 +25,13 @@ dashboard/
 │   ├── layout.tsx       # Root layout with fonts and Toaster
 │   └── page.tsx         # Entry point, renders SpatiAdminPage
 ├── components/          # React components
-│   ├── spatis/          # Domain-specific components (Dashboard, Login, Sections)
+│   ├── spatis/          # Domain-specific components
+│   │   ├── admin-content.tsx # Main auth-guarded layout
+│   │   ├── amenity-section.tsx
+│   │   ├── dashboard.tsx     # Main dashboard view
+│   │   ├── login-view.tsx
+│   │   ├── mood-section.tsx  # Mood management
+│   │   └── spati-section.tsx # Location management
 │   └── ui/              # Reusable UI components (Buttons, Inputs, Dialogs)
 ├── generated/           # Auto-generated API TypeScript definitions
 │   └── api-types.ts     # OpenAPI interfaces
@@ -47,13 +53,20 @@ dashboard/
 - **Admin Authentication:** Secure login interface interacting with `/admin/auth/login`.
 - **Location Management:**
   - View a paginated/filterable list of Spätis.
-  - Create, Update, and Delete locations .
-  - Manage details including geolocation, opening hours, and ratings .
+  - Create, Update, and Delete locations.
+  - Manage details including geolocation, opening hours, and ratings.
 - **Amenity Management:**
   - Maintain a catalog of amenities (e.g., WiFi, Seating).
   - Associate amenities with specific Späti locations.
+- **Mood Management:**
+  - Create, Update, and Delete moods (e.g., "Chill", "Party").
+  - Manage mood associations.
 - **Responsive UI:** Sidebar navigation that adapts to mobile and desktop viewports.
 - **Dark Mode:** Built-in support via CSS variables and Tailwind.
+- **Enhanced Interactions:**
+  - **Toasts:** Real-time feedback using `sonner`.
+  - **Drawers:** Mobile-friendly sheets using `vaul`.
+  - **Command Menu:** Fast navigation and actions using `cmdk`.
 
 ---
 
@@ -69,6 +82,8 @@ dashboard/
 | **Forms**      | React Hook Form   | Form state management   |
 | **Validation** | Zod               | Schema validation       |
 | **Icons**      | Lucide React      | Iconography             |
+| **UI Utilities**| `sonner`, `vaul`, `cmdk` | Toasts, Drawers, Commands |
+| **File Upload**| `react-dropzone`  | Drag & drop uploads     |
 | **Build**      | Docker            | Containerization        |
 
 ---
@@ -101,8 +116,6 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:3333
 OPENAPI_SPEC_URL=http://localhost:3333/docs/json
 ```
 
-_[Derived from cite: 522, 1277]_
-
 ### 3\. Generate API Types
 
 If the backend API has changed, regenerate the TypeScript interfaces to ensure type safety:
@@ -111,15 +124,13 @@ If the backend API has changed, regenerate the TypeScript interfaces to ensure t
 npm run generate:api-types
 ```
 
-_[See cite: 1279]_
-
 ### 4\. Run Development Server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ---
 
@@ -162,6 +173,3 @@ The main layout controller that switches between the `LoginView` and the `Dashbo
 Defines the shape and constraints of data using Zod. For example, the `adminSpatiLocationSchema` ensures coordinates are numbers and names are non-empty strings.
 
 ---
-
-**Next Steps:**
-Would you like me to create a detailed breakdown of the `lib/api` folder to help you understand how the data fetching layer is constructed?

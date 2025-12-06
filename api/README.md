@@ -42,7 +42,7 @@ src
     - Defines endpoints (e.g., `/spatis`, `/admin/spatis`).
     - Uses **Zod** schemas to validate headers, params, and body _before_ execution.
     - Calls the **Service** layer.
-    - _Key files:_ `spatiRoutes.ts` (Public), `adminSpatiRoutes.ts` (Protected).
+    - _Key files:_ `spatiRoutes.ts` (Public), `adminSpatiRoutes.ts`, `adminAmenityRoutes.ts`, `adminMoodRoutes.ts`, `adminAuthRoutes.ts` (Protected).
 
 2.  **Services (`src/services`)**:
     - Contains the business logic.
@@ -129,6 +129,36 @@ The project auto-generates OpenAPI v3 documentation.
 - **Swagger UI:** Visit `http://localhost:3333/docs` to view endpoints and test the API interactively.
 - **JSON Spec:** Available at `http://localhost:3333/docs/json-app`.
 
+### Available Endpoints
+
+#### Public
+- `GET /spatis` - List all Späti locations.
+- `GET /amenities` - List all available amenities.
+- `GET /moods` - List all available moods.
+
+#### Admin (Protected)
+Requires `Authorization: Bearer <token>` header.
+
+- **Auth**
+  - `POST /admin/auth/login` - Admin login to get a JWT.
+
+- **Spätis**
+  - `POST /admin/spatis` - Create a new Späti.
+  - `PUT /admin/spatis/:id` - Update an existing Späti.
+  - `DELETE /admin/spatis/:id` - Delete a Späti.
+
+- **Amenities**
+  - `GET /admin/amenities` - List all amenities (admin view).
+  - `POST /admin/amenities` - Create a new amenity.
+  - `PUT /admin/amenities/:id` - Update an amenity.
+  - `DELETE /admin/amenities/:id` - Delete an amenity.
+
+- **Moods**
+  - `GET /admin/moods` - List all moods (admin view).
+  - `POST /admin/moods` - Create a new mood.
+  - `PUT /admin/moods/:id` - Update a mood.
+  - `DELETE /admin/moods/:id` - Delete a mood.
+
 _Note: The Swagger configuration includes a filter to hide specific Admin routes or tags depending on the configuration in `src/plugins/swagger.ts`._
 
 ### Amenity Image Uploads
@@ -165,10 +195,15 @@ The project uses a `Makefile` to simplify common tasks:
 | `npm run lint:fix`     | Runs ESLint with `--fix` to automatically correct simple issues. |
 | `npm run format`       | Formats the repository with Prettier.                            |
 | `npm run format:check` | Validates the repository formatting without writing changes.     |
+| `npm run seed:data`    | Seeds the database with initial amenities, moods, and Spätis.    |
+| `npm run seed:admin`   | Creates an initial admin user.                                   |
 
 ## 📦 Database Schema
 
-The core entity is `spati_locations`, defined in `src/db/schema.ts`.
+The core entities are defined in `src/db/schema.ts`.
+
+### `spati_locations`
+Stores the main information about each Späti.
 
 ```sql
 CREATE TABLE "spati_locations" (
@@ -180,7 +215,54 @@ CREATE TABLE "spati_locations" (
   "address" text NOT NULL,
   "opening_hours" text NOT NULL,
   "store_type" text NOT NULL,
-  "rating" double precision NOT NULL
+  "rating" double precision NOT NULL,
+  "image_url" text,
+  "mood_id" text REFERENCES moods(id)
+);
+```
+
+### `moods`
+Categories for the "vibe" of a Späti (e.g., "Chill", "Party").
+
+```sql
+CREATE TABLE "moods" (
+  "id" text PRIMARY KEY,
+  "name" text NOT NULL,
+  "color" text NOT NULL -- Hex code
+);
+```
+
+### `amenities`
+Features available at a Späti (e.g., "ATM", "Toilet").
+
+```sql
+CREATE TABLE "amenities" (
+  "id" text PRIMARY KEY,
+  "name" text NOT NULL,
+  "image_url" text
+);
+```
+
+### `spati_amenities`
+Many-to-many relationship between Spätis and Amenities.
+
+```sql
+CREATE TABLE "spati_amenities" (
+  "spati_id" text REFERENCES spati_locations(id) ON DELETE CASCADE,
+  "amenity_id" text REFERENCES amenities(id) ON DELETE CASCADE,
+  PRIMARY KEY ("spati_id", "amenity_id")
+);
+```
+
+### `admins`
+Admin users for the back-office.
+
+```sql
+CREATE TABLE "admins" (
+  "id" text PRIMARY KEY,
+  "email" text NOT NULL UNIQUE,
+  "password_hash" text NOT NULL,
+  "created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 ```
 
