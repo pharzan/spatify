@@ -15,6 +15,10 @@
     {
       "name": "dashboard",
       "path": "./dashboard"
+    },
+    {
+      "name": "landing",
+      "path": "./landing"
     }
   ],
   "settings": {

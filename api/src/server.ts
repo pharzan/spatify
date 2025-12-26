@@ -24,6 +24,9 @@ import { Storage as GoogleCloudStorage } from '@google-cloud/storage';
 import { GcsAmenityImageStorage } from './services/storage/amenityImageStorage.js';
 import { GcsSpatiImageStorage } from './services/storage/spatiImageStorage.js';
 import { GcsMoodImageStorage } from './services/storage/moodImageStorage.js';
+import { PostgresNewsletterRepository } from './repositories/newsletterRepository.js';
+import { NewsletterService } from './services/newsletterService.js';
+import { registerNewsletterRoutes } from './routes/newsletterRoutes.js';
 
 export const buildServer = async (): Promise<FastifyInstance> => {
   const app = Fastify({
@@ -79,6 +82,10 @@ export const buildServer = async (): Promise<FastifyInstance> => {
   registerAdminAmenityRoutes(app, amenityAdminService);
   registerAdminMoodRoutes(app, moodAdminService);
   registerAdminAuthRoutes(app, adminAuthService);
+
+  const newsletterRepository = new PostgresNewsletterRepository(db);
+  const newsletterService = new NewsletterService(newsletterRepository);
+  registerNewsletterRoutes(app, newsletterService);
 
   return app;
 };

@@ -71,3 +71,12 @@ export type NewMoodRecord = typeof moods.$inferInsert;
 export type SpatiAmenityRecord = typeof spatiAmenities.$inferSelect;
 export type AdminRecord = typeof admins.$inferSelect;
 export type NewAdminRecord = typeof admins.$inferInsert;
+
+export const newsletterSubscribers = pgTable('newsletter_subscribers', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export type NewsletterSubscriberRecord = typeof newsletterSubscribers.$inferSelect;
+export type NewNewsletterSubscriberRecord = typeof newsletterSubscribers.$inferInsert;
