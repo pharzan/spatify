@@ -4,159 +4,698 @@
  */
 
 export interface paths {
-  "/spatis": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List Späti locations */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["PublicSpatiLocationsResponse"];
-          };
+    "/spatis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/amenities": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List amenities */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["PublicAmenitiesResponse"];
-          };
+        /** List Späti locations */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicSpatiLocationsResponse"];
+                    };
+                };
+            };
         };
-      };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/moods": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List moods */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["PublicMoodsResponse"];
-          };
+    "/amenities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
+        /** List amenities */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicAmenitiesResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/admin/spatis": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/moods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List moods */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicMoodsResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /** Create a Späti location */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "multipart/form-data": {
-            name: string;
-            description: string;
-            latitude: number;
-            longitude: number;
-            address: string;
-            hours: string;
-            type: string;
-            rating: number;
-            amenityIds?: string[];
-            /** @description Optional Mood identifier */
-            moodId?: string;
-            /**
-             * Format: binary
-             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
-             */
-            image?: string;
-            /**
-             * Format: uri
-             * @description Optional direct URL to reuse instead of uploading a file.
-             */
-            imageUrl?: string | null;
-            /** @description Set to true to delete the currently stored image. */
-            removeImage?: boolean;
-          };
-          "application/json": {
+    "/admin/spatis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a Späti location */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        name: string;
+                        description: string;
+                        latitude: number;
+                        longitude: number;
+                        address: string;
+                        hours: string;
+                        type: string;
+                        rating: number;
+                        amenityIds?: string[];
+                        /** @description Optional Mood identifier */
+                        moodId?: string;
+                        /**
+                         * Format: binary
+                         * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+                         */
+                        image?: string;
+                        /**
+                         * Format: uri
+                         * @description Optional direct URL to reuse instead of uploading a file.
+                         */
+                        imageUrl?: string | null;
+                        /** @description Set to true to delete the currently stored image. */
+                        removeImage?: boolean;
+                    };
+                    "application/json": {
+                        name: string;
+                        description: string;
+                        latitude: number;
+                        longitude: number;
+                        address: string;
+                        hours: string;
+                        type: string;
+                        rating: number;
+                        /**
+                         * Format: uri
+                         * @description Public URL for the Späti image
+                         */
+                        imageUrl?: string | null;
+                        /**
+                         * @description Amenities assigned to this Späti
+                         * @default []
+                         */
+                        amenityIds?: string[];
+                        /** @description Mood identifier assigned to this Späti */
+                        moodId?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminSpatiLocation"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/spatis/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update a Späti location */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Späti identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        name: string;
+                        description: string;
+                        latitude: number;
+                        longitude: number;
+                        address: string;
+                        hours: string;
+                        type: string;
+                        rating: number;
+                        amenityIds?: string[];
+                        /** @description Optional Mood identifier */
+                        moodId?: string;
+                        /**
+                         * Format: binary
+                         * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+                         */
+                        image?: string;
+                        /**
+                         * Format: uri
+                         * @description Optional direct URL to reuse instead of uploading a file.
+                         */
+                        imageUrl?: string | null;
+                        /** @description Set to true to delete the currently stored image. */
+                        removeImage?: boolean;
+                    };
+                    "application/json": unknown;
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminSpatiLocation"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        /** Delete a Späti location */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Späti identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": null;
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/amenities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List amenities */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAmenitiesResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create an amenity */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        /** @description Human readable amenity name */
+                        name: string;
+                        /**
+                         * Format: binary
+                         * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+                         */
+                        image?: string;
+                        /**
+                         * Format: uri
+                         * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
+                         */
+                        imageUrl?: string | null;
+                        /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
+                        removeImage?: boolean;
+                    };
+                    "application/json": {
+                        /** @description Human readable amenity name */
+                        name: string;
+                        /**
+                         * Format: uri
+                         * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
+                         */
+                        imageUrl?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Amenity"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/amenities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update an amenity */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Amenity identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        /** @description Human readable amenity name */
+                        name: string;
+                        /**
+                         * Format: binary
+                         * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+                         */
+                        image?: string;
+                        /**
+                         * Format: uri
+                         * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
+                         */
+                        imageUrl?: string | null;
+                        /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
+                        removeImage?: boolean;
+                    };
+                    "application/json": {
+                        /** @description Human readable amenity name */
+                        name: string;
+                        /**
+                         * Format: uri
+                         * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
+                         */
+                        imageUrl?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Amenity"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        /** Delete an amenity */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Amenity identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": null;
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/moods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List moods */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminMoodsResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create a mood */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        /** @description Name of the mood */
+                        name: string;
+                        /** @description Color code of the mood */
+                        color: string;
+                        /**
+                         * Format: binary
+                         * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+                         */
+                        image?: string;
+                        /**
+                         * Format: uri
+                         * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
+                         */
+                        imageUrl?: string | null;
+                        /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
+                        removeImage?: boolean;
+                    };
+                    "application/json": {
+                        /** @description Name of the mood */
+                        name: string;
+                        /** @description Color code of the mood */
+                        color: string;
+                        /**
+                         * Format: uri
+                         * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
+                         */
+                        imageUrl?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Mood"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/moods/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update a mood */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Mood identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "multipart/form-data": {
+                        /** @description Name of the mood */
+                        name: string;
+                        /** @description Color code of the mood */
+                        color: string;
+                        /**
+                         * Format: binary
+                         * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
+                         */
+                        image?: string;
+                        /**
+                         * Format: uri
+                         * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
+                         */
+                        imageUrl?: string | null;
+                        /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
+                        removeImage?: boolean;
+                    };
+                    "application/json": {
+                        /** @description Name of the mood */
+                        name: string;
+                        /** @description Color code of the mood */
+                        color: string;
+                        /**
+                         * Format: uri
+                         * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
+                         */
+                        imageUrl?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Mood"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        /** Delete a mood */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Mood identifier */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Default Response */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": null;
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Admin login */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AdminLogin"];
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAuthResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+}
+export type webhooks = Record<string, never>;
+export interface components {
+    schemas: {
+        AdminLogin: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        PublicSpatiLocationsResponse: components["schemas"]["PublicSpatiLocation"][];
+        PublicSpatiLocation: {
             name: string;
             description: string;
             latitude: number;
@@ -169,537 +708,53 @@ export interface paths {
              * Format: uri
              * @description Public URL for the Späti image
              */
-            imageUrl?: string | null;
-            /**
-             * @description Amenities assigned to this Späti
-             * @default []
-             */
-            amenityIds?: string[];
-            /** @description Mood identifier assigned to this Späti */
-            moodId?: string;
-          };
+            imageUrl: string | null;
+            /** @description Unique identifier of the Späti */
+            id: string;
+            /** @description Amenities available at the Späti */
+            amenities: components["schemas"]["Amenity"][];
+            /** @description Mood associated with the Späti */
+            mood: components["schemas"]["Mood"] | null;
         };
-      };
-      responses: {
-        /** @description Default Response */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["AdminSpatiLocation"];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/admin/spatis/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update a Späti location */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Späti identifier */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "multipart/form-data": {
-            name: string;
-            description: string;
-            latitude: number;
-            longitude: number;
-            address: string;
-            hours: string;
-            type: string;
-            rating: number;
-            amenityIds?: string[];
-            /** @description Optional Mood identifier */
-            moodId?: string;
-            /**
-             * Format: binary
-             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
-             */
-            image?: string;
-            /**
-             * Format: uri
-             * @description Optional direct URL to reuse instead of uploading a file.
-             */
-            imageUrl?: string | null;
-            /** @description Set to true to delete the currently stored image. */
-            removeImage?: boolean;
-          };
-          "application/json": unknown;
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["AdminSpatiLocation"];
-          };
-        };
-      };
-    };
-    post?: never;
-    /** Delete a Späti location */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Späti identifier */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": null;
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/admin/amenities": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List amenities */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["AdminAmenitiesResponse"];
-          };
-        };
-      };
-    };
-    put?: never;
-    /** Create an amenity */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "multipart/form-data": {
-            /** @description Human readable amenity name */
-            name: string;
-            /**
-             * Format: binary
-             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
-             */
-            image?: string;
-            /**
-             * Format: uri
-             * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
-             */
-            imageUrl?: string | null;
-            /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
-            removeImage?: boolean;
-          };
-          "application/json": {
+        Amenity: {
+            /** @description Unique identifier of the amenity */
+            id: string;
             /** @description Human readable amenity name */
             name: string;
             /**
              * Format: uri
-             * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
+             * @description Public URL for the amenity image
              */
-            imageUrl?: string | null;
-          };
+            imageUrl: string | null;
         };
-      };
-      responses: {
-        /** @description Default Response */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["Amenity"];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/admin/amenities/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update an amenity */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Amenity identifier */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: {
-        content: {
-          "multipart/form-data": {
-            /** @description Human readable amenity name */
+        Mood: {
+            /** @description Unique identifier of the mood */
+            id: string;
+            /** @description Name of the mood */
             name: string;
-            /**
-             * Format: binary
-             * @description Image file upload (PNG, JPEG, WEBP, AVIF, or SVG). Only used with multipart/form-data.
-             */
-            image?: string;
+            /** @description Color code of the mood */
+            color: string;
             /**
              * Format: uri
-             * @description Optional direct URL to reuse instead of uploading a file. Send null to remove the existing image without uploading.
+             * @description Public URL for the mood image
              */
-            imageUrl?: string | null;
-            /** @description Set to true (multipart/form-data only) to delete the currently stored image. */
-            removeImage?: boolean;
-          };
-          "application/json": {
-            /** @description Human readable amenity name */
-            name: string;
-            /**
-             * Format: uri
-             * @description Optional URL to reuse instead of uploading a file. Set to null to remove the current image.
-             */
-            imageUrl?: string | null;
-          };
+            imageUrl: string | null;
         };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["Amenity"];
-          };
+        PublicAmenitiesResponse: components["schemas"]["Amenity"][];
+        PublicMoodsResponse: components["schemas"]["Mood"][];
+        AdminSpatiLocation: components["schemas"]["PublicSpatiLocation"];
+        AdminAmenitiesResponse: components["schemas"]["Amenity"][];
+        AdminMoodsResponse: components["schemas"]["Mood"][];
+        AdminAuthResponse: {
+            /** @description Bearer token used for admin-only APIs */
+            token: string;
         };
-      };
     };
-    post?: never;
-    /** Delete an amenity */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Amenity identifier */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": null;
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/admin/moods": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List moods */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["AdminMoodsResponse"];
-          };
-        };
-      };
-    };
-    put?: never;
-    /** Create a mood */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["MoodInputAdmin"];
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["Mood"];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/admin/moods/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update a mood */
-    put: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Mood identifier */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["MoodInputAdmin"];
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["Mood"];
-          };
-        };
-      };
-    };
-    post?: never;
-    /** Delete a mood */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /** @description Mood identifier */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Default Response */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": null;
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/admin/auth/login": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Admin login */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["AdminLogin"];
-        };
-      };
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": components["schemas"]["AdminAuthResponse"];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-}
-export type webhooks = Record<string, never>;
-export interface components {
-  schemas: {
-    MoodInputAdmin: {
-      /** @description Name of the mood */
-      name: string;
-      /** @description Color code of the mood */
-      color: string;
-    };
-    AdminLogin: {
-      /** Format: email */
-      email: string;
-      password: string;
-    };
-    PublicSpatiLocationsResponse: components["schemas"]["PublicSpatiLocation"][];
-    PublicSpatiLocation: {
-      name: string;
-      description: string;
-      latitude: number;
-      longitude: number;
-      address: string;
-      hours: string;
-      type: string;
-      rating: number;
-      /**
-       * Format: uri
-       * @description Public URL for the Späti image
-       */
-      imageUrl: string | null;
-      /** @description Unique identifier of the Späti */
-      id: string;
-      /** @description Amenities available at the Späti */
-      amenities: components["schemas"]["Amenity"][];
-      /** @description Mood associated with the Späti */
-      mood: components["schemas"]["Mood"] | null;
-    };
-    Amenity: {
-      /** @description Unique identifier of the amenity */
-      id: string;
-      /** @description Human readable amenity name */
-      name: string;
-      /**
-       * Format: uri
-       * @description Public URL for the amenity image
-       */
-      imageUrl: string | null;
-    };
-    Mood: {
-      /** @description Unique identifier of the mood */
-      id: string;
-      /** @description Name of the mood */
-      name: string;
-      /** @description Color code of the mood */
-      color: string;
-    };
-    PublicAmenitiesResponse: components["schemas"]["Amenity"][];
-    PublicMoodsResponse: components["schemas"]["Mood"][];
-    AdminSpatiLocation: components["schemas"]["PublicSpatiLocation"];
-    AdminAmenitiesResponse: components["schemas"]["Amenity"][];
-    AdminMoodsResponse: components["schemas"]["Mood"][];
-    AdminAuthResponse: {
-      /** @description Bearer token used for admin-only APIs */
-      token: string;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;

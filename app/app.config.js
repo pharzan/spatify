@@ -14,7 +14,7 @@ export default {
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
-    newArchEnabled: true,
+    newArchEnabled: false,
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",
@@ -51,12 +51,7 @@ export default {
       googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     },
     plugins: [
-      [
-        "react-native-maps",
-        {
-          apiKey: GOOGLE_MAPS_API_KEY,
-        },
-      ],
+
       [
         "expo-location",
         {

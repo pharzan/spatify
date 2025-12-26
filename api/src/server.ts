@@ -23,6 +23,8 @@ import { FastifyZodOpenApiTypeProvider } from 'fastify-zod-openapi';
 import { Storage as GoogleCloudStorage } from '@google-cloud/storage';
 import { GcsAmenityImageStorage } from './services/storage/amenityImageStorage.js';
 import { GcsSpatiImageStorage } from './services/storage/spatiImageStorage.js';
+import { GcsMoodImageStorage } from './services/storage/moodImageStorage.js';
+
 export const buildServer = async (): Promise<FastifyInstance> => {
   const app = Fastify({
     logger: true,
@@ -66,7 +68,10 @@ export const buildServer = async (): Promise<FastifyInstance> => {
   const spatiAdminService = new SpatiAdminService(spatiRepository, spatiImageStorage);
   const amenityImageStorage = new GcsAmenityImageStorage(storage, config.storage.amenityBucket);
   const amenityAdminService = new AmenityAdminService(amenityRepository, amenityImageStorage);
-  const moodAdminService = new MoodAdminService(moodRepository);
+
+  const moodImageStorage = new GcsMoodImageStorage(storage, config.storage.amenityBucket);
+  const moodAdminService = new MoodAdminService(moodRepository, moodImageStorage);
+
   const adminAuthService = new AdminAuthService(adminRepository);
 
   registerSpatiRoutes(app, spatiService);

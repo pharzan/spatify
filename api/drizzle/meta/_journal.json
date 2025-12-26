@@ -36,6 +36,13 @@
       "when": 1763916700210,
       "tag": "0004_broken_marvel_boy",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766443812899,
+      "tag": "0005_free_jubilee",
+      "breakpoints": true
     }
   ]
 }

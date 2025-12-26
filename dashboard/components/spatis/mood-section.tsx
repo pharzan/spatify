@@ -128,9 +128,14 @@ export const MoodSection = () => {
   });
 
   const onSubmit = form.handleSubmit((values) => {
+    const imageFile =
+      values.image instanceof FileList ? values.image[0] : values.image;
+
     const payload: CreateMoodPayload | UpdateMoodPayload = {
       name: values.name,
       color: values.color,
+      image: imageFile,
+      removeImage: values.removeImage,
     };
 
     if (editing) {
@@ -180,16 +185,27 @@ export const MoodSection = () => {
                   {moodsQuery.data?.map((mood) => (
                     <TableRow key={mood.id}>
                       <TableCell>
-                        <div
-                          className="h-8 w-8 rounded border"
-                          style={{ backgroundColor: mood.color }}
-                        />
+                        {mood.imageUrl ? (
+                          <img
+                            src={mood.imageUrl}
+                            alt={mood.name}
+                            className="h-8 w-8 rounded object-cover"
+                          />
+                        ) : (
+                          <div className="h-8 w-8 rounded bg-muted" />
+                        )}
                       </TableCell>
                       <TableCell>{mood.name}</TableCell>
                       <TableCell>
-                        <code className="text-xs bg-muted px-2 py-1 rounded">
-                          {mood.color}
-                        </code>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="h-6 w-6 rounded border"
+                            style={{ backgroundColor: mood.color }}
+                          />
+                          <code className="text-xs bg-muted px-2 py-1 rounded">
+                            {mood.color}
+                          </code>
+                        </div>
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         <Button
@@ -277,6 +293,50 @@ export const MoodSection = () => {
                   Click the color box to pick a color, or enter a hex code
                   manually
                 </p>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="mood-image">Icon</Label>
+                <Input
+                  id="mood-image"
+                  type="file"
+                  accept="image/*"
+                  {...form.register("image")}
+                />
+                {editing?.imageUrl && !form.watch("removeImage") && (
+                  <div className="flex items-center gap-4 rounded-md border p-2">
+                    <img
+                      src={editing.imageUrl}
+                      alt="Current icon"
+                      className="h-10 w-10 rounded object-cover"
+                    />
+                    <div className="flex-1 text-sm text-muted-foreground">
+                      Current icon
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => form.setValue("removeImage", true)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+                {form.watch("removeImage") && (
+                  <div className="text-sm text-muted-foreground">
+                    Icon will be removed on save.{" "}
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="h-auto p-0"
+                      onClick={() => form.setValue("removeImage", false)}
+                    >
+                      Undo
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {mutationError ? (

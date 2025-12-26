@@ -23,6 +23,7 @@ export const mapMoodRecordToMood = (record: MoodRecord): Mood => ({
   id: record.id,
   name: record.name,
   color: record.color,
+  imageUrl: record.imageUrl,
 });
 
 export const mapRecordToSpatiLocation = (
@@ -67,4 +68,5 @@ export const mapAmenityInputToRecord = (input: AmenityInput) => ({
 export const mapMoodInputToRecord = (input: MoodInput) => ({
   name: input.name,
   color: input.color,
+  imageUrl: input.imageUrl ?? null,
 });

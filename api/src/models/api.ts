@@ -15,11 +15,13 @@ export const MoodSchema = z.object({
   id: z.string().describe('Unique identifier of the mood'),
   name: z.string().describe('Name of the mood'),
   color: z.string().describe('Color code of the mood'),
+  imageUrl: z.string().url().nullable().describe('Public URL for the mood image'),
 });
 
 export const MoodInputSchema = z.object({
   name: MoodSchema.shape.name,
   color: MoodSchema.shape.color,
+  imageUrl: MoodSchema.shape.imageUrl.optional(),
 });
 
 const baseSpatiSchema = z.object({

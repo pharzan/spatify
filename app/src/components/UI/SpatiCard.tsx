@@ -1,4 +1,5 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import { useEffect, useRef } from "react";
+import { StyleSheet, View, Text, TouchableOpacity, Image, Animated, Easing } from "react-native";
 import { StarRating } from "./StarRating";
 import type { SpatiLocation } from "../../hooks/useSpatiQuery";
 
@@ -32,9 +33,9 @@ const getDistanceInKm = (
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.sin(dLon / 2) *
-      Math.sin(dLon / 2) *
-      Math.cos(fromLatRad) *
-      Math.cos(toLatRad);
+    Math.sin(dLon / 2) *
+    Math.cos(fromLatRad) *
+    Math.cos(toLatRad);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return Math.round(earthRadiusKm * c * 10) / 10;
@@ -48,6 +49,47 @@ export const SpatiCard = ({
 }: Props) => {
   const distance = getDistanceInKm(userLocation, spati);
   const moodColor = spati.mood?.color ?? "#000000";
+
+  const wiggleAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!spati.mood?.imageUrl) return;
+
+    const wiggle = Animated.sequence([
+      Animated.timing(wiggleAnim, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      Animated.timing(wiggleAnim, {
+        toValue: -1,
+        duration: 300,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      Animated.timing(wiggleAnim, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      Animated.delay(3000), // Pause between wiggles
+    ]);
+
+    Animated.loop(wiggle).start();
+  }, [wiggleAnim, spati.mood]);
+
+  const wiggleStyle = {
+    transform: [
+      {
+        rotate: wiggleAnim.interpolate({
+          inputRange: [-1, 1],
+          outputRange: ["-15deg", "15deg"],
+        }),
+      },
+    ],
+  };
 
   return (
     <View style={styles.card}>
@@ -82,6 +124,15 @@ export const SpatiCard = ({
             style={styles.image}
             resizeMode="cover"
           />
+          {spati.mood?.imageUrl && (
+            <Animated.View style={[styles.moodStampContainer, wiggleStyle]}>
+              <Image
+                source={{ uri: spati.mood.imageUrl }}
+                style={styles.moodStamp}
+                resizeMode="contain"
+              />
+            </Animated.View>
+          )}
         </View>
       </View>
 
@@ -172,15 +223,36 @@ const styles = StyleSheet.create({
     margin: 16,
     // Shadow properties for the glow
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 20,
-    elevation: 10, // Reduced elevation for Android performance
+    shadowOpacity: 1,
+    shadowRadius: 15,
+    elevation: 20,
     backgroundColor: "transparent", // Important for shadow on Android
   },
   imageContainer: {
     borderRadius: 16,
     overflow: "hidden",
-    borderWidth: 3,
+    borderWidth: 2,
+    position: 'relative', // For absolute positioning of stamp
+  },
+  moodStampContainer: {
+    position: 'absolute',
+    top: 18,
+    left: 18,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  moodStamp: {
+    width: 48,
+    height: 48,
   },
   content: {
     padding: 20,

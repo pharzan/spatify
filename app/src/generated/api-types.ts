@@ -156,6 +156,11 @@ export interface components {
             name: string;
             /** @description Color code of the mood */
             color: string;
+            /**
+             * Format: uri
+             * @description Public URL for the mood image
+             */
+            imageUrl: string | null;
         };
         PublicAmenitiesResponse: components["schemas"]["Amenity"][];
         PublicMoodsResponse: components["schemas"]["Mood"][];

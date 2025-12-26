@@ -64,6 +64,8 @@ export const adminMoodInputSchema = z.object({
     /^#[0-9A-Fa-f]{6}$/,
     "Color must be a valid hex code (e.g., #FF5733)",
   ),
+  image: z.any().optional(), // FileList or File
+  removeImage: z.boolean().optional(),
 });
 
 export const adminLoginSchema = z.object({

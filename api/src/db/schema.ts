@@ -11,6 +11,7 @@ export const moods = pgTable('moods', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   color: text('color').notNull(), // Hex code like #6b46ff
+  imageUrl: text('image_url'),
 });
 
 export const spatiLocations = pgTable('spati_locations', {
