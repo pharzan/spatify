@@ -5,18 +5,17 @@ console.log(
     ? "Yes (" + GOOGLE_MAPS_API_KEY.substring(0, 5) + "...)"
     : "No"
 );
-
 export default {
   expo: {
     name: "app",
     slug: "app",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/Spatify-android-01.png",
     userInterfaceStyle: "light",
     newArchEnabled: false,
     splash: {
-      image: "./assets/splash-icon.png",
+      image: "./assets/Spatify-android-01.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
@@ -25,11 +24,13 @@ export default {
       bundleIdentifier: "com.anonymous.app",
       config: {
         googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+        EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
+
       },
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/Spatify-android-01.png",
         backgroundColor: "#ffffff",
       },
       edgeToEdgeEnabled: true,
@@ -38,6 +39,7 @@ export default {
       config: {
         googleMaps: {
           apiKey: GOOGLE_MAPS_API_KEY,
+          EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
         },
       },
     },
@@ -49,6 +51,7 @@ export default {
         projectId: "7b5a9e92-4242-4d03-b227-7fdf9c972854",
       },
       googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+      EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
     },
     plugins: [
 

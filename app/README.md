@@ -103,10 +103,14 @@ Happy mapping! Feel free to extend the hooks/components pattern with new overlay
 ### Build
 
 first create a keystore file.
-
+0. npx expo prebuild --clean
 1. npx expo prebuild
-2. npx expo run:android
 3. npm run setup:android-signing -- --store-file my-release-key.keystore --store-password 123456 --key-alias spatifyRelease --key-password 123456
-4. cd android && NODE_ENV=production ./gradlew assembleRelease
-5. open app/build/outputs/apk/release/
+4. cd android
+5. ./gradlew clean
+6.a NODE_ENV=production ./gradlew assembleRelease
+6.b npx dotenv-cli -e .env -- ./gradlew assembleRelease
+5. open app/build/outputs/apk/release/ (in windows wsl: explorer.exe app/build/outputs/apk/release/)
 
+#### Note:
+In windows I opened the project from wsl and ran the commands in wsl.

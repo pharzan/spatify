@@ -1,6 +1,9 @@
 # Spatify Monorepo
 
 Spatify is a full-stack platform for discovering and curating "Spätis"—Berlin's late-night convenience stores. This repository houses apps that work together: a Fastify-powered API, an Expo mobile app, and a Next.js admin dashboard. Each package is self-contained but shares the same product vocabulary, data contracts, and OpenAPI spec.
+# Download latest android release apk
+
+To download the latest android release apk, you can get it from the [releases](https://github.com/pharzan/spatify/releases) page.
 
 ## Repository Layout
 
