@@ -65,6 +65,7 @@ const emptySpatiFormValues: AdminSpatiLocationFormValues = {
   longitude: "0",
   amenityIds: [],
   moodId: undefined,
+  sterniValue: undefined,
 };
 
 type NormalizedSpati = Spati & { amenityIds: string[] };
@@ -90,6 +91,7 @@ const toFormValues = (
   longitude: spati.longitude != null ? String(spati.longitude) : "0",
   amenityIds: spati.amenityIds ?? [],
   moodId: spati.mood?.id ?? undefined,
+  sterniValue: spati.sterniValue ?? undefined,
 });
 
 const getToastErrorMessage = (error: unknown) =>
@@ -309,6 +311,7 @@ export const SpatiSection = () => {
                     <TableHead>Type</TableHead>
                     <TableHead>Rating</TableHead>
                     <TableHead>Mood</TableHead>
+                    <TableHead>Sterni</TableHead>
                     <TableHead>Amenities</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -361,6 +364,17 @@ export const SpatiSection = () => {
                         ) : (
                           <span className="text-xs text-muted-foreground">
                             None
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {spati.sterniValue ? (
+                          <Badge variant="outline" className="capitalize">
+                            {spati.sterniValue.replace("_", " ")}
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            —
                           </span>
                         )}
                       </TableCell>
@@ -628,6 +642,32 @@ export const SpatiSection = () => {
                   ) : null}
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="spati-sterni">Sterni Value</Label>
+                  <Controller
+                    control={form.control}
+                    name="sterniValue"
+                    render={({ field }) => (
+                      <Select
+                        value={field.value ?? "none"}
+                        onValueChange={(value) => {
+                          field.onChange(value === "none" ? undefined : value);
+                        }}
+                      >
+                        <SelectTrigger id="spati-sterni">
+                          <SelectValue placeholder="Select price level (optional)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="very_high">Very High</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label>Amenities</Label>
                   <Controller
                     control={form.control}
@@ -647,8 +687,8 @@ export const SpatiSection = () => {
                                   const next = value
                                     ? [...(field.value ?? []), amenity.id]
                                     : (field.value ?? []).filter(
-                                        (id) => id !== amenity.id,
-                                      );
+                                      (id) => id !== amenity.id,
+                                    );
                                   field.onChange(next);
                                 }}
                               />

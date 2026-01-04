@@ -41,6 +41,7 @@ export const mapRecordToSpatiLocation = (
   imageUrl: record.imageUrl,
   amenities: record.amenities.map(mapAmenityRecordToAmenity),
   mood: record.mood ? mapMoodRecordToMood(record.mood) : null,
+  sterniValue: record.sterniValue,
 });
 
 export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
@@ -57,6 +58,7 @@ export const mapSpatiLocationInputToRecord = (input: SpatiLocationInput) => {
     rating: spatiInput.rating,
     imageUrl: spatiInput.imageUrl ?? null,
     moodId: spatiInput.moodId ?? null,
+    sterniValue: spatiInput.sterniValue ?? null,
   };
 };
 

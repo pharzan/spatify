@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image, Animated, Easing } from "react-native";
 import { StarRating } from "./StarRating";
+import { SterniMeter } from "./SterniMeter";
 import type { SpatiLocation } from "../../hooks/useSpatiQuery";
 
 type Coordinates = { latitude: number; longitude: number };
@@ -138,8 +139,11 @@ export const SpatiCard = ({
 
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.name}>{spati.name}</Text>
-          <StarRating rating={spati.rating} />
+          <View style={styles.headerInfo}>
+            <Text style={styles.name}>{spati.name}</Text>
+            <StarRating rating={spati.rating} />
+          </View>
+          <SterniMeter value={spati.sterniValue} size={60} />
         </View>
         <Text style={styles.description} numberOfLines={2}>
           {spati.description}
@@ -262,6 +266,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 8,
+  },
+  headerInfo: {
+    flex: 1,
+    marginRight: 12,
   },
   name: {
     fontSize: 20,

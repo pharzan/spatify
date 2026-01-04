@@ -5,10 +5,14 @@ type SpatiListResponse =
   paths["/spatis"]["get"]["responses"]["200"]["content"]["application/json"];
 type CreateSpatiPayload = NonNullable<
   paths["/admin/spatis"]["post"]["requestBody"]
->["content"]["multipart/form-data"];
+>["content"]["multipart/form-data"] & {
+  sterniValue?: "low" | "medium" | "high" | "very_high";
+};
 type UpdateSpatiPayload = NonNullable<
   paths["/admin/spatis/{id}"]["put"]["requestBody"]
->["content"]["multipart/form-data"];
+>["content"]["multipart/form-data"] & {
+  sterniValue?: "low" | "medium" | "high" | "very_high";
+};
 type CreateSpatiResult =
   paths["/admin/spatis"]["post"]["responses"]["201"]["content"]["application/json"];
 type UpdateSpatiResult =
@@ -47,6 +51,10 @@ export const createSpati = (payload: CreateSpatiPayload) => {
     formData.append("moodId", payload.moodId);
   }
 
+  if (payload.sterniValue) {
+    formData.append("sterniValue", payload.sterniValue);
+  }
+
   if (payload.image) {
     formData.append("image", payload.image as unknown as Blob);
   }
@@ -77,6 +85,10 @@ export const updateSpati = (id: SpatiId, data: UpdateSpatiPayload) => {
 
   if (data.moodId) {
     formData.append("moodId", data.moodId);
+  }
+
+  if (data.sterniValue) {
+    formData.append("sterniValue", data.sterniValue);
   }
 
   if (data.image) {

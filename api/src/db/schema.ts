@@ -1,11 +1,19 @@
 import {
   doublePrecision,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
+
+export const sterniValues = pgEnum('sterni_value', [
+  'low',
+  'medium',
+  'high',
+  'very_high',
+]);
 
 export const moods = pgTable('moods', {
   id: text('id').primaryKey(),
@@ -26,6 +34,7 @@ export const spatiLocations = pgTable('spati_locations', {
   rating: doublePrecision('rating').notNull(),
   imageUrl: text('image_url'),
   moodId: text('mood_id').references(() => moods.id),
+  sterniValue: sterniValues('sterni_value'),
 });
 
 export const amenities = pgTable('amenities', {

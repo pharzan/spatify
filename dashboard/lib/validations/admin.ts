@@ -47,6 +47,7 @@ export const adminSpatiLocationSchema = z.object({
   rating: numericField("Rating", { min: 0, max: 5 }),
   amenityIds: z.array(requiredText("Amenity")).default([]),
   moodId: z.string().optional(),
+  sterniValue: z.enum(["low", "medium", "high", "very_high"]).optional(),
   image: z.any().optional(), // FileList or File
   removeImage: z.boolean().optional(),
 }) satisfies z.ZodType<AdminSpatiLocationInput>;

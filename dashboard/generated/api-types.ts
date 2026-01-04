@@ -177,6 +177,11 @@ export interface paths {
                         amenityIds?: string[];
                         /** @description Mood identifier assigned to this Späti */
                         moodId?: string;
+                        /**
+                         * @description Price level of the Späti
+                         * @enum {string}
+                         */
+                        sterniValue?: "low" | "medium" | "high" | "very_high";
                     };
                 };
             };
@@ -685,6 +690,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/newsletter/subscribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Subscribe to newsletter */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["NewsletterSubscribeRequest"];
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success: boolean;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -693,6 +740,10 @@ export interface components {
             /** Format: email */
             email: string;
             password: string;
+        };
+        NewsletterSubscribeRequest: {
+            /** Format: email */
+            email: string;
         };
         PublicSpatiLocationsResponse: components["schemas"]["PublicSpatiLocation"][];
         PublicSpatiLocation: {
@@ -715,6 +766,11 @@ export interface components {
             amenities: components["schemas"]["Amenity"][];
             /** @description Mood associated with the Späti */
             mood: components["schemas"]["Mood"] | null;
+            /**
+             * @description Price level of the Späti
+             * @enum {string|null}
+             */
+            sterniValue?: "low" | "medium" | "high" | "very_high" | null;
         };
         Amenity: {
             /** @description Unique identifier of the amenity */
