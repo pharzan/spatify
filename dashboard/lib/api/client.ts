@@ -1,6 +1,6 @@
 "use client";
 
-import { getAuthToken } from "@/lib/auth/token-storage";
+import { getAuthToken, setAuthToken } from "@/lib/auth/token-storage";
 
 const API_BASE_URL = (
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3333"
@@ -30,6 +30,12 @@ export async function apiFetch<TResponse>(
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      setAuthToken(null);
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
+    }
     const message = await response.text().catch(() => "");
     throw new Error(
       message || `Request to ${path} failed with status ${response.status}`,
