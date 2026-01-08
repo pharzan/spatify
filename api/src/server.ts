@@ -37,15 +37,15 @@ export const buildServer = async (): Promise<FastifyInstance> => {
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
+  await app.register(fastifyJwt, {
+    secret: config.auth.jwtSecret,
+  });
   await app.register(fastifyMultipart, {
     limits: {
       fileSize: config.uploads.amenityImageMaxBytes,
     },
   });
   await registerSwagger(app);
-  await app.register(fastifyJwt, {
-    secret: config.auth.jwtSecret,
-  });
 
   app.decorate('authenticate', async (request, _reply) => {
     void _reply;
